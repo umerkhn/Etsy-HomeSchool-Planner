@@ -1,6 +1,7 @@
+import { memo } from 'react';
 import { usePlanner } from '../../context/PlannerContext';
 
-export default function ChecklistItem({ field, label, className = '' }) {
+export default memo(function ChecklistItem({ field, label, className = '' }) {
   const { getValue, updateField } = usePlanner();
   const checked = getValue(field, false);
   return (
@@ -29,4 +30,4 @@ export default function ChecklistItem({ field, label, className = '' }) {
       <span className={`text-sm ${checked ? 'line-through text-medium-gray' : 'text-charcoal'}`}>{label}</span>
     </label>
   );
-}
+});

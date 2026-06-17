@@ -34,7 +34,7 @@ export default function CoverPage() {
       <div className="flex-1 flex flex-col justify-center p-8 md:p-12 bg-white rounded-r-2xl">
         <div className="max-w-md mx-auto w-full">
           {/* Title */}
-          <h1 className="font-[Playfair_Display] text-4xl md:text-5xl font-bold text-charcoal leading-tight mb-3">
+          <h1 className="font-display text-4xl md:text-5xl font-bold text-charcoal leading-tight mb-3">
             Ultimate<br />Homeschool<br />Planner
           </h1>
           <p className="text-lg text-dark-gray font-light mb-10">

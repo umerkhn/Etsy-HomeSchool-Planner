@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { allPages, sections, totalPages } from '../../utils/pageRegistry';
-import SaveIndicator from '../Utils/SaveIndicator';
+import SaveIndicator from '../Shared/SaveIndicator';
 
 export default function Navigation({ onMenuClick }) {
   const location = useLocation();

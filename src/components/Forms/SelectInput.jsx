@@ -1,6 +1,8 @@
+import { memo } from 'react';
 import { usePlanner } from '../../context/PlannerContext';
+import { SELECT_CLASS } from './formStyles';
 
-export default function SelectInput({ field, label, options = [], className = '' }) {
+export default memo(function SelectInput({ field, label, options = [], className = '' }) {
   const { getValue, updateField } = usePlanner();
   return (
     <div className={`flex flex-col gap-1 ${className}`}>
@@ -8,7 +10,7 @@ export default function SelectInput({ field, label, options = [], className = ''
       <select
         value={getValue(field)}
         onChange={(e) => updateField(field, e.target.value)}
-        className="border border-light-gray rounded-lg px-3 py-2 text-sm font-[Poppins] bg-white focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all"
+        className={SELECT_CLASS}
       >
         <option value="">Select...</option>
         {options.map((opt) => (
@@ -19,4 +21,4 @@ export default function SelectInput({ field, label, options = [], className = ''
       </select>
     </div>
   );
-}
+});

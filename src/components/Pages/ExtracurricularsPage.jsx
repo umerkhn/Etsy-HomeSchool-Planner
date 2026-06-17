@@ -1,18 +1,21 @@
+import { useMemo } from 'react';
 import PageWrapper from '../Layout/PageWrapper';
 import { usePlanner } from '../../context/PlannerContext';
 import { childColors } from '../../utils/colorSystem';
+import { INLINE_INPUT_CLASS, INLINE_TEXTAREA_CLASS } from '../Forms/formStyles';
 
+// Hoisted to module scope
+const ACTIVITIES = [0, 1];
+const CHILD_INDICES = [1, 2, 3, 4];
 export default function ExtracurricularsPage() {
   const { getValue, updateField, getChildName } = usePlanner();
 
-  const ACTIVITIES = [0, 1]; // 2 activities per child
 
-  // Calculate totals
-  const getTotals = () => {
+  // Memoized totals calculation
+  const totals = useMemo(() => {
     let totalHours = 0;
     let totalCost = 0;
-
-    [1, 2, 3, 4].forEach((childIdx) => {
+    CHILD_INDICES.forEach((childIdx) => {
       ACTIVITIES.forEach((actIdx) => {
         const hoursVal = parseFloat(getValue(`extra_hours_c${childIdx}_a${actIdx}`, '0')) || 0;
         const costVal = parseFloat(getValue(`extra_cost_c${childIdx}_a${actIdx}`, '0')) || 0;
@@ -20,16 +23,13 @@ export default function ExtracurricularsPage() {
         totalCost += costVal;
       });
     });
-
     return { hours: totalHours, cost: totalCost };
-  };
-
-  const totals = getTotals();
+  }, [getValue]);
 
   return (
     <PageWrapper title="Extracurricular Activities & Enrichment" pageNum={61}>
       <div className="space-y-8">
-        {[1, 2, 3, 4].map((childIdx) => {
+        {CHILD_INDICES.map((childIdx) => {
           const name = getChildName(childIdx);
           const color = childColors[childIdx];
 

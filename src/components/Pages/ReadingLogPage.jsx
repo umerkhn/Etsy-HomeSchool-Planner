@@ -1,11 +1,15 @@
+import { useMemo } from 'react';
 import PageWrapper from '../Layout/PageWrapper';
 import { usePlanner } from '../../context/PlannerContext';
 import { childColors } from '../../utils/colorSystem';
+import { INLINE_INPUT_CLASS, INLINE_TEXTAREA_CLASS } from '../Forms/formStyles';
+
+// Hoisted to module scope
+const ROWS = Array.from({ length: 15 }, (_, i) => i);
+const CHILD_INDICES = [1, 2, 3, 4];
 
 export default function ReadingLogPage() {
   const { getValue, updateField, getChildName } = usePlanner();
-
-  const ROWS = Array.from({ length: 15 }, (_, i) => i);
 
   // Calculate totals for a child
   const getTotals = (childIdx) => {
@@ -15,7 +19,6 @@ export default function ReadingLogPage() {
     ROWS.forEach((rowIdx) => {
       const title = getValue(`read_title_c${childIdx}_r${rowIdx}`, '').trim();
       const pagesStr = getValue(`read_pages_c${childIdx}_r${rowIdx}`, '');
-      const checked = getValue(`read_check_c${childIdx}_r${rowIdx}`, false);
 
       if (title) {
         booksCount++;
@@ -32,7 +35,7 @@ export default function ReadingLogPage() {
   return (
     <PageWrapper title="Reading Log 2025–2026" pageNum={59}>
       <div className="space-y-12">
-        {[1, 2, 3, 4].map((childIdx) => {
+        {CHILD_INDICES.map((childIdx) => {
           const name = getChildName(childIdx);
           const color = childColors[childIdx];
           const totals = getTotals(childIdx);
@@ -90,7 +93,7 @@ export default function ReadingLogPage() {
                             value={getValue(`read_date_c${childIdx}_r${rowIdx}`)}
                             onChange={(e) => updateField(`read_date_c${childIdx}_r${rowIdx}`, e.target.value)}
                             placeholder="M/D"
-                            className="w-full border border-light-gray rounded px-1.5 py-1 text-xs outline-none focus:border-primary text-center font-normal"
+                            className={`${INLINE_INPUT_CLASS} text-center font-normal`}
                           />
                         </td>
                         <td className="py-1 px-1">
@@ -99,7 +102,7 @@ export default function ReadingLogPage() {
                             value={getValue(`read_title_c${childIdx}_r${rowIdx}`)}
                             onChange={(e) => updateField(`read_title_c${childIdx}_r${rowIdx}`, e.target.value)}
                             placeholder="Book title"
-                            className="w-full border border-light-gray rounded px-2.5 py-1 text-xs outline-none focus:border-primary font-medium"
+                            className={`${INLINE_INPUT_CLASS} font-medium`}
                           />
                         </td>
                         <td className="py-1 px-1">
@@ -108,7 +111,7 @@ export default function ReadingLogPage() {
                             value={getValue(`read_author_c${childIdx}_r${rowIdx}`)}
                             onChange={(e) => updateField(`read_author_c${childIdx}_r${rowIdx}`, e.target.value)}
                             placeholder="Author name"
-                            className="w-full border border-light-gray rounded px-2 py-1 text-xs outline-none focus:border-primary"
+                            className={INLINE_INPUT_CLASS}
                           />
                         </td>
                         <td className="py-1 px-1">
@@ -117,7 +120,7 @@ export default function ReadingLogPage() {
                             value={getValue(`read_pages_c${childIdx}_r${rowIdx}`)}
                             onChange={(e) => updateField(`read_pages_c${childIdx}_r${rowIdx}`, e.target.value)}
                             placeholder="120"
-                            className="w-full border border-light-gray rounded px-2 py-1 text-xs outline-none focus:border-primary text-center"
+                            className={`${INLINE_INPUT_CLASS} text-center`}
                           />
                         </td>
                         <td className="py-1 px-1">
@@ -126,7 +129,7 @@ export default function ReadingLogPage() {
                             value={getValue(`read_level_c${childIdx}_r${rowIdx}`)}
                             onChange={(e) => updateField(`read_level_c${childIdx}_r${rowIdx}`, e.target.value)}
                             placeholder="e.g. Lexile"
-                            className="w-full border border-light-gray rounded px-2 py-1 text-xs outline-none focus:border-primary text-center"
+                            className={`${INLINE_INPUT_CLASS} text-center`}
                           />
                         </td>
                         <td className="py-1 px-1 text-center">
@@ -159,7 +162,7 @@ export default function ReadingLogPage() {
                 value={getValue('fb_title')}
                 onChange={(e) => updateField('fb_title', e.target.value)}
                 placeholder="Shared book title"
-                className="w-full border border-light-gray rounded-xl px-4 py-2 text-xs outline-none focus:border-primary bg-white"
+                className={INLINE_INPUT_CLASS}
               />
             </div>
             <div>
@@ -169,7 +172,7 @@ export default function ReadingLogPage() {
                 value={getValue('fb_author')}
                 onChange={(e) => updateField('fb_author', e.target.value)}
                 placeholder="Author name"
-                className="w-full border border-light-gray rounded-xl px-4 py-2 text-xs outline-none focus:border-primary bg-white"
+                className={INLINE_INPUT_CLASS}
               />
             </div>
             <div>
@@ -179,7 +182,7 @@ export default function ReadingLogPage() {
                 value={getValue('fb_dates')}
                 onChange={(e) => updateField('fb_dates', e.target.value)}
                 placeholder="e.g., Oct 1 - Oct 25"
-                className="w-full border border-light-gray rounded-xl px-4 py-2 text-xs outline-none focus:border-primary bg-white"
+                className={INLINE_INPUT_CLASS}
               />
             </div>
           </div>
@@ -190,7 +193,7 @@ export default function ReadingLogPage() {
               onChange={(e) => updateField('fb_notes', e.target.value)}
               placeholder="What questions did you discuss? What were key takeaways or favorite sections?"
               rows={4}
-              className="w-full border border-light-gray rounded-xl p-3 text-xs bg-white outline-none focus:border-primary resize-none"
+              className={INLINE_TEXTAREA_CLASS}
             />
           </div>
         </div>

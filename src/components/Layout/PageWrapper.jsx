@@ -1,5 +1,6 @@
 import { generatePDF } from '../../utils/pdfGenerator';
 import { usePlanner } from '../../context/PlannerContext';
+import { totalPages } from '../../utils/pageRegistry';
 
 export default function PageWrapper({ children, title, pageNum, colorBar }) {
   const { getValue } = usePlanner();
@@ -19,11 +20,11 @@ export default function PageWrapper({ children, title, pageNum, colorBar }) {
         <div className="p-8 sm:p-12">
           {title && (
             <div className="mb-10">
-              <h2 className="font-[Playfair_Display] text-3xl font-bold text-primary">
+              <h2 className="font-display text-3xl font-bold text-primary">
                 {title}
               </h2>
               {pageNum && (
-                <div className="text-xs text-medium-gray mt-1.5">Page {pageNum} of 65</div>
+                <div className="text-xs text-medium-gray mt-1.5">Page {pageNum} of {totalPages}</div>
               )}
             </div>
           )}

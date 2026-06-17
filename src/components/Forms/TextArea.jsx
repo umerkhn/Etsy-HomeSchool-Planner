@@ -1,6 +1,8 @@
+import { memo } from 'react';
 import { usePlanner } from '../../context/PlannerContext';
+import { TEXTAREA_CLASS } from './formStyles';
 
-export default function TextArea({ field, placeholder, label, rows = 4, className = '' }) {
+export default memo(function TextArea({ field, placeholder, label, rows = 4, className = '' }) {
   const { getValue, updateField } = usePlanner();
   return (
     <div className={`flex flex-col gap-1 ${className}`}>
@@ -10,8 +12,8 @@ export default function TextArea({ field, placeholder, label, rows = 4, classNam
         onChange={(e) => updateField(field, e.target.value)}
         placeholder={placeholder || ''}
         rows={rows}
-        className="border border-light-gray rounded-lg px-3 py-2 text-sm font-[Poppins] bg-white focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all resize-vertical"
+        className={TEXTAREA_CLASS}
       />
     </div>
   );
-}
+});

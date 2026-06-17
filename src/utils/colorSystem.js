@@ -9,13 +9,3 @@ export const childColors = {
 export const getChildColor = (childIndex) => {
   return childColors[childIndex] || childColors[1];
 };
-
-export const getChildName = (data, childIndex) => {
-  const key = `child${childIndex}Name`;
-  return data?.[key] || `Child ${childIndex}`;
-};
-
-export const getChildAge = (data, childIndex) => {
-  const key = `child${childIndex}Age`;
-  return data?.[key] || '';
-};

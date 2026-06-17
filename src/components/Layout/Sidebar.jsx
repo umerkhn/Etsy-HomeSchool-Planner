@@ -33,7 +33,7 @@ export default function Sidebar({ isOpen, onClose }) {
         <div className="sticky top-0 bg-white border-b border-light-gray p-5 z-10">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="font-[Playfair_Display] text-lg font-bold text-primary leading-tight">
+              <h1 className="font-display text-lg font-bold text-primary leading-tight">
                 Homeschool Planner
               </h1>
               <p className="text-xs text-medium-gray mt-0.5">2025–2026</p>

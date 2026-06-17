@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
-import { loadData, saveData } from '../utils/storageManager';
+import { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { loadData, saveData, clearData } from '../utils/storageManager';
 
 const PlannerContext = createContext(null);
 
@@ -7,9 +7,15 @@ export function PlannerProvider({ children }) {
   const [data, setData] = useState(() => loadData());
   const [lastSaved, setLastSaved] = useState(null);
   const saveTimer = useRef(null);
+  const isInitialMount = useRef(true);
 
-  // Debounced auto-save (500ms)
+  // Debounced auto-save (500ms) — skip initial mount
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
       saveData(data);
@@ -26,6 +32,38 @@ export function PlannerProvider({ children }) {
     setData((prev) => ({ ...prev, ...obj }));
   }, []);
 
+  const clearAllData = useCallback(() => {
+    setData({});
+    clearData();
+    setLastSaved(null);
+  }, []);
+
+  // Stable actions object — never changes reference
+  const actions = useMemo(
+    () => ({ updateField, updateFields, clearAllData }),
+    [updateField, updateFields, clearAllData]
+  );
+
+  // Context value: data changes, actions stay stable
+  const value = useMemo(
+    () => ({ data, actions, lastSaved }),
+    [data, actions, lastSaved]
+  );
+
+  return (
+    <PlannerContext.Provider value={value}>
+      {children}
+    </PlannerContext.Provider>
+  );
+}
+
+export function usePlanner() {
+  const ctx = useContext(PlannerContext);
+  if (!ctx) throw new Error('usePlanner must be used within PlannerProvider');
+
+  const { data, actions, lastSaved } = ctx;
+
+  // Derived helpers — stable callbacks that read from current data
   const getValue = useCallback(
     (key, fallback = '') => {
       return data[key] !== undefined ? data[key] : fallback;
@@ -43,33 +81,12 @@ export function PlannerProvider({ children }) {
     [data]
   );
 
-  const clearAllData = useCallback(() => {
-    setData({});
-    localStorage.removeItem('homeschool_planner_data');
-    setLastSaved(null);
-  }, []);
-
-  return (
-    <PlannerContext.Provider
-      value={{
-        data,
-        setData,
-        updateField,
-        updateFields,
-        getValue,
-        getChildName,
-        getChildAge,
-        clearAllData,
-        lastSaved,
-      }}
-    >
-      {children}
-    </PlannerContext.Provider>
-  );
-}
-
-export function usePlanner() {
-  const ctx = useContext(PlannerContext);
-  if (!ctx) throw new Error('usePlanner must be used within PlannerProvider');
-  return ctx;
+  return {
+    data,
+    ...actions,
+    getValue,
+    getChildName,
+    getChildAge,
+    lastSaved,
+  };
 }

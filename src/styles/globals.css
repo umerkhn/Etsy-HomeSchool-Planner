@@ -4,30 +4,30 @@
 
 /* ========== DESIGN SYSTEM TOKENS ========== */
 @theme {
-  --color-primary: var(--color-primary);
-  --color-primary-light: var(--color-primary-light);
-  --color-primary-dark: var(--color-primary-dark);
-  --color-cream: var(--color-cream);
-  --color-charcoal: var(--color-charcoal);
-  --color-coral: var(--color-coral);
-  --color-coral-light: var(--color-coral-light);
-  --color-coral-bg: var(--color-coral-bg);
-  --color-sage: var(--color-sage);
-  --color-sage-light: var(--color-sage-light);
-  --color-sage-bg: var(--color-sage-bg);
-  --color-gold: var(--color-gold);
-  --color-gold-light: var(--color-gold-light);
-  --color-gold-bg: var(--color-gold-bg);
-  --color-lavender: var(--color-lavender);
-  --color-lavender-light: var(--color-lavender-light);
-  --color-lavender-bg: var(--color-lavender-bg);
-  --color-light-gray: var(--color-light-gray);
-  --color-medium-gray: var(--color-medium-gray);
-  --color-dark-gray: var(--color-dark-gray);
-  --color-teal: var(--color-teal);
+  --color-primary: #4A6FA5;
+  --color-primary-light: #5a7fb5;
+  --color-primary-dark: #3a5f95;
+  --color-cream: #F9F7F3;
+  --color-charcoal: #2C2C2C;
+  --color-coral: #E8A89D;
+  --color-coral-light: #f5d4ce;
+  --color-coral-bg: #fdf5f3;
+  --color-sage: #A8D4B8;
+  --color-sage-light: #d0eadb;
+  --color-sage-bg: #f3faf6;
+  --color-gold: #E8C8A0;
+  --color-gold-light: #f2dfc5;
+  --color-gold-bg: #fdf8f2;
+  --color-lavender: #D4B8E8;
+  --color-lavender-light: #e8d8f2;
+  --color-lavender-bg: #f9f3fd;
+  --color-light-gray: #E8E8E8;
+  --color-medium-gray: #B8B8B8;
+  --color-dark-gray: #5C5C5C;
+  --color-teal: #3A9B6A;
 
-  --font-display: var(--font-display);
-  --font-body: var(--font-body);
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Poppins', system-ui, sans-serif;
 }
 
 /* ========== BASE STYLES ========== */
@@ -106,38 +106,11 @@ label {
   box-shadow: 0 8px 30px -4px rgba(74, 111, 165, 0.08), 0 4px 12px -2px rgba(74, 111, 165, 0.04);
 }
 
-/* ========== FORM ELEMENTS ========== */
-input[type="text"],
-input[type="number"],
-input[type="date"],
-input[type="email"],
-textarea,
-select {
-  font-family: var(--font-body);
-  font-size: 0.85rem;
-  color: var(--color-charcoal);
-  background: white;
-  border: 1.5px solid var(--color-light-gray);
-  border-radius: 8px;
-  padding: 9px 12px;
-  width: 100%;
-  transition: all 0.2s ease-in-out;
-  outline: none;
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.12);
-}
-
-input::placeholder,
-textarea::placeholder {
-  color: var(--color-medium-gray);
-  font-style: italic;
-  opacity: 0.7;
-}
+/*
+ * NOTE: Global form element styles have been intentionally removed.
+ * All form styling is handled by Tailwind classes in the Form components
+ * (TextInput, TextArea, DateInput, SelectInput) to avoid specificity conflicts.
+ */
 
 /* ========== SCROLLBAR ========== */
 ::-webkit-scrollbar {
@@ -252,4 +225,3 @@ textarea::placeholder {
 .animate-pulse-save {
   animation: pulse-save 1.5s ease-in-out;
 }
-

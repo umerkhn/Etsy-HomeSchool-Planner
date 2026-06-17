@@ -1,38 +1,37 @@
+import { useMemo } from 'react';
 import PageWrapper from '../Layout/PageWrapper';
 import { usePlanner } from '../../context/PlannerContext';
 import { childColors } from '../../utils/colorSystem';
+import { INLINE_INPUT_CLASS } from '../Forms/formStyles';
+
+// Hoisted to module scope
+const CATEGORIES = [
+  { key: 'curriculum', label: 'Curriculum' },
+  { key: 'supplies', label: 'Supplies & Materials' },
+  { key: 'extra', label: 'Extracurriculars' },
+  { key: 'field_trips', label: 'Field Trips & Outings' },
+  { key: 'other', label: 'Other Expenses' },
+];
+const ROWS = Array.from({ length: 5 }, (_, i) => i);
 
 export default function ExpensesPage() {
   const { getValue, updateField, getChildName } = usePlanner();
 
-  const CATEGORIES = [
-    { key: 'curriculum', label: 'Curriculum' },
-    { key: 'supplies', label: 'Supplies & Materials' },
-    { key: 'extra', label: 'Extracurriculars' },
-    { key: 'field_trips', label: 'Field Trips & Outings' },
-    { key: 'other', label: 'Other Expenses' },
-  ];
-
-  const ROWS = Array.from({ length: 5 }, (_, i) => i);
-
-  // Calculate subtotal for a category
-  const getSubtotal = (catKey) => {
-    let sum = 0;
-    ROWS.forEach((rowIdx) => {
-      const cost = parseFloat(getValue(`exp_${catKey}_cost_${rowIdx}`, '0')) || 0;
-      sum += cost;
+  // Memoized financial calculations
+  const { subtotals, totalSpent } = useMemo(() => {
+    const subs = {};
+    let total = 0;
+    CATEGORIES.forEach((cat) => {
+      let sum = 0;
+      ROWS.forEach((rowIdx) => {
+        const cost = parseFloat(getValue(`exp_${cat.key}_cost_${rowIdx}`, '0')) || 0;
+        sum += cost;
+      });
+      subs[cat.key] = sum;
+      total += sum;
     });
-    return sum;
-  };
-
-  // Calculate annual summary
-  const subtotals = {};
-  let totalSpent = 0;
-  CATEGORIES.forEach((cat) => {
-    const sub = getSubtotal(cat.key);
-    subtotals[cat.key] = sub;
-    totalSpent += sub;
-  });
+    return { subtotals: subs, totalSpent: total };
+  }, [getValue]);
 
   const budgetTarget = parseFloat(getValue('exp_budget_target', '0')) || 0;
   const variance = budgetTarget - totalSpent;
@@ -106,7 +105,7 @@ export default function ExpensesPage() {
                             value={getValue(`${baseKey}_item`)}
                             onChange={(e) => updateField(`${baseKey}_item`, e.target.value)}
                             placeholder="Item name"
-                            className="w-full border border-light-gray rounded px-2.5 py-1 text-xs outline-none focus:border-primary bg-white"
+                            className={INLINE_INPUT_CLASS}
                           />
                         </td>
                         <td className="py-1 px-1">
@@ -114,7 +113,7 @@ export default function ExpensesPage() {
                             type="date"
                             value={getValue(`${baseKey}_date`)}
                             onChange={(e) => updateField(`${baseKey}_date`, e.target.value)}
-                            className="w-full border border-light-gray rounded px-2 py-1 text-xs outline-none focus:border-primary bg-white"
+                            className={INLINE_INPUT_CLASS}
                           />
                         </td>
                         <td className="py-1 px-1">
@@ -125,7 +124,7 @@ export default function ExpensesPage() {
                               value={getValue(`exp_${cat.key}_cost_${rowIdx}`)}
                               onChange={(e) => updateField(`exp_${cat.key}_cost_${rowIdx}`, e.target.value)}
                               placeholder="0.00"
-                              className="w-full border border-light-gray rounded px-2 py-1 text-xs outline-none focus:border-primary bg-white"
+                              className={INLINE_INPUT_CLASS}
                             />
                           </div>
                         </td>
@@ -133,7 +132,7 @@ export default function ExpensesPage() {
                           <select
                             value={getValue(`${baseKey}_child`)}
                             onChange={(e) => updateField(`${baseKey}_child`, e.target.value)}
-                            className="w-full border border-light-gray rounded px-1.5 py-1 text-xs outline-none focus:border-primary bg-white font-medium text-dark-gray"
+                            className={`${INLINE_INPUT_CLASS} font-medium text-dark-gray`}
                           >
                             <option value="">— Family —</option>
                             <option value="1">{getChildName(1)}</option>
@@ -148,7 +147,7 @@ export default function ExpensesPage() {
                             value={getValue(`${baseKey}_notes`)}
                             onChange={(e) => updateField(`${baseKey}_notes`, e.target.value)}
                             placeholder="Store, link, invoice ref..."
-                            className="w-full border border-light-gray rounded px-2.5 py-1 text-xs outline-none focus:border-primary bg-white"
+                            className={INLINE_INPUT_CLASS}
                           />
                         </td>
                       </tr>

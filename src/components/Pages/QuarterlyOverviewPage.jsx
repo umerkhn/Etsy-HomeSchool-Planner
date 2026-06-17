@@ -37,7 +37,7 @@ function ProgressBar({ field }) {
 
 export default function QuarterlyOverviewPage() {
   const { quarter } = useParams();
-  const { getChildName } = usePlanner();
+  const { getChildName, getValue, updateField } = usePlanner();
   const q = QUARTERS.find((x) => x.key === quarter) || QUARTERS[0];
   const qIdx = QUARTERS.indexOf(q);
   const pageNum = 9 + qIdx;
@@ -62,16 +62,13 @@ export default function QuarterlyOverviewPage() {
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="flex items-start gap-2">
                 <span className="mt-2">🎯</span>
-                <div className="flex-1">
-                  <label className="text-xs font-medium mb-1 block" style={{ color: childColors[i].hex }}>
-                    {getChildName(i)}
-                  </label>
-                  <textarea
-                    className="w-full border border-light-gray rounded-lg px-3 py-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none resize-vertical"
-                    rows={2}
-                    placeholder={`${getChildName(i)}'s goal for this quarter`}
-                  />
-                </div>
+                <TextArea
+                  field={`${quarter}_childGoal_c${i}`}
+                  label={getChildName(i)}
+                  rows={2}
+                  placeholder={`${getChildName(i)}'s goal for this quarter`}
+                  className="flex-1"
+                />
               </div>
             ))}
           </div>
@@ -129,6 +126,8 @@ export default function QuarterlyOverviewPage() {
                     <td className="py-1 px-2">
                       <input
                         type="text"
+                        value={getValue(`${quarter}_c${i}_progress_notes`, '')}
+                        onChange={(e) => updateField(`${quarter}_c${i}_progress_notes`, e.target.value)}
                         placeholder="Notes"
                         className="w-full border border-light-gray rounded px-2 py-1 text-xs focus:border-primary outline-none"
                       />

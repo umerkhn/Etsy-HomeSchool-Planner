@@ -153,7 +153,7 @@ export default function ReflectionPage() {
           </div>
 
           <div className="pt-2">
-            <label className="text-xs font-semibold text-charcoal block mb-1.5 font-[Playfair_Display] italic">
+            <label className="text-xs font-semibold text-charcoal block mb-1.5 font-display italic">
               "This year we will always remember..."
             </label>
             <textarea
@@ -161,7 +161,7 @@ export default function ReflectionPage() {
               onChange={(e) => updateField('ref_will_remember', e.target.value)}
               placeholder="Capture the single most precious moment, funniest event, or overall theme of the year."
               rows={2}
-              className="w-full border border-light-gray rounded-xl p-3 text-xs outline-none focus:border-primary resize-none bg-primary/5 font-medium text-primary font-[Poppins]"
+              className="w-full border border-light-gray rounded-xl p-3 text-xs outline-none focus:border-primary resize-none bg-primary/5 font-medium text-primary font-body"
             />
           </div>
         </div>

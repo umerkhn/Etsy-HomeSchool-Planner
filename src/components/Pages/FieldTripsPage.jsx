@@ -1,18 +1,22 @@
+import { useMemo } from 'react';
 import PageWrapper from '../Layout/PageWrapper';
 import { usePlanner } from '../../context/PlannerContext';
 import { childColors } from '../../utils/colorSystem';
+import { INLINE_INPUT_CLASS, INLINE_TEXTAREA_CLASS } from '../Forms/formStyles';
+
+// Hoisted to module scope — stable references across renders
+const PLANNED_TRIPS = Array.from({ length: 5 }, (_, i) => i);
+const COMPLETED_LOGS = Array.from({ length: 3 }, (_, i) => i);
+const CHILD_INDICES = [1, 2, 3, 4];
 
 export default function FieldTripsPage() {
   const { getValue, updateField, getChildName } = usePlanner();
-
-  const PLANNED_TRIPS = Array.from({ length: 5 }, (_, i) => i);
-  const COMPLETED_LOGS = Array.from({ length: 3 }, (_, i) => i);
 
   // Helper to calculate total cost for a planned trip
   const getPlannedTripTotal = (tripIdx) => {
     const costPerChild = parseFloat(getValue(`ft_planned_cost_${tripIdx}`, '0')) || 0;
     let kidsChecked = 0;
-    [1, 2, 3, 4].forEach((childIdx) => {
+    CHILD_INDICES.forEach((childIdx) => {
       if (getValue(`ft_planned_kid_${tripIdx}_c${childIdx}`, false)) {
         kidsChecked++;
       }
@@ -47,7 +51,7 @@ export default function FieldTripsPage() {
                         value={getValue(`${baseKey}_name`)}
                         onChange={(e) => updateField(`${baseKey}_name`, e.target.value)}
                         placeholder="e.g. Science Museum Outing"
-                        className="w-full border border-light-gray rounded px-3 py-1.5 text-xs outline-none focus:border-primary"
+                        className={INLINE_INPUT_CLASS}
                       />
                     </div>
                     <div>
@@ -57,7 +61,7 @@ export default function FieldTripsPage() {
                         value={getValue(`${baseKey}_dest`)}
                         onChange={(e) => updateField(`${baseKey}_dest`, e.target.value)}
                         placeholder="Address or venue"
-                        className="w-full border border-light-gray rounded px-3 py-1.5 text-xs outline-none focus:border-primary"
+                        className={INLINE_INPUT_CLASS}
                       />
                     </div>
                   </div>
@@ -69,7 +73,7 @@ export default function FieldTripsPage() {
                         type="date"
                         value={getValue(`${baseKey}_date`)}
                         onChange={(e) => updateField(`${baseKey}_date`, e.target.value)}
-                        className="w-full border border-light-gray rounded px-3 py-1.5 text-xs outline-none focus:border-primary"
+                        className={INLINE_INPUT_CLASS}
                       />
                     </div>
                     <div>
@@ -79,7 +83,7 @@ export default function FieldTripsPage() {
                         value={getValue(`${baseKey}_time`)}
                         onChange={(e) => updateField(`${baseKey}_time`, e.target.value)}
                         placeholder="e.g. 10:00 AM"
-                        className="w-full border border-light-gray rounded px-3 py-1.5 text-xs outline-none focus:border-primary"
+                        className={INLINE_INPUT_CLASS}
                       />
                     </div>
                     <div>
@@ -91,7 +95,7 @@ export default function FieldTripsPage() {
                           value={getValue(`ft_planned_cost_${tripIdx}`)}
                           onChange={(e) => updateField(`ft_planned_cost_${tripIdx}`, e.target.value)}
                           placeholder="0.00"
-                          className="w-full border border-light-gray rounded px-3 py-1.5 text-xs outline-none focus:border-primary"
+                          className={INLINE_INPUT_CLASS}
                         />
                       </div>
                     </div>
@@ -107,7 +111,7 @@ export default function FieldTripsPage() {
                   <div className="py-2 border-t border-b border-cream">
                     <span className="text-[10px] font-semibold text-dark-gray block mb-2">Children Attending:</span>
                     <div className="flex flex-wrap gap-4">
-                      {[1, 2, 3, 4].map((childIdx) => (
+                      {CHILD_INDICES.map((childIdx) => (
                         <label key={childIdx} className="flex items-center gap-1.5 text-xs text-charcoal cursor-pointer">
                           <input
                             type="checkbox"
@@ -137,7 +141,7 @@ export default function FieldTripsPage() {
                         value={getValue(`${baseKey}_focus`)}
                         onChange={(e) => updateField(`${baseKey}_focus`, e.target.value)}
                         placeholder="What academic standard or interest is this tied to?"
-                        className="w-full border border-light-gray rounded px-3 py-1.5 text-xs outline-none focus:border-primary"
+                        className={INLINE_INPUT_CLASS}
                       />
                     </div>
                     <div className="flex flex-col">
@@ -174,7 +178,7 @@ export default function FieldTripsPage() {
                       value={getValue(`${baseKey}_notes`)}
                       onChange={(e) => updateField(`${baseKey}_notes`, e.target.value)}
                       placeholder="Packing list, lunch plans, driving instructions..."
-                      className="w-full border border-light-gray rounded px-3 py-1.5 text-xs outline-none focus:border-primary"
+                      className={INLINE_INPUT_CLASS}
                     />
                   </div>
                 </div>
@@ -206,7 +210,7 @@ export default function FieldTripsPage() {
                         value={getValue(`${baseKey}_name`)}
                         onChange={(e) => updateField(`${baseKey}_name`, e.target.value)}
                         placeholder="Trip title"
-                        className="w-full border border-light-gray rounded px-3 py-1.5 text-xs outline-none focus:border-primary font-medium"
+                        className={`${INLINE_INPUT_CLASS} font-medium`}
                       />
                     </div>
                     <div>
@@ -215,7 +219,7 @@ export default function FieldTripsPage() {
                         type="date"
                         value={getValue(`${baseKey}_date`)}
                         onChange={(e) => updateField(`${baseKey}_date`, e.target.value)}
-                        className="w-full border border-light-gray rounded px-3 py-1.5 text-xs outline-none focus:border-primary"
+                        className={INLINE_INPUT_CLASS}
                       />
                     </div>
                   </div>
@@ -227,7 +231,7 @@ export default function FieldTripsPage() {
                       value={getValue(`${baseKey}_kids`)}
                       onChange={(e) => updateField(`${baseKey}_kids`, e.target.value)}
                       placeholder="Who went on this trip? (e.g. C1, C2, etc.)"
-                      className="w-full border border-light-gray rounded px-3 py-1.5 text-xs outline-none focus:border-primary"
+                      className={INLINE_INPUT_CLASS}
                     />
                   </div>
 
@@ -238,7 +242,7 @@ export default function FieldTripsPage() {
                       onChange={(e) => updateField(`${baseKey}_outcomes`, e.target.value)}
                       placeholder="What was observed? What did they learn? Any special moments?"
                       rows={3}
-                      className="w-full border border-light-gray rounded p-3 text-xs outline-none focus:border-primary resize-none"
+                      className={INLINE_TEXTAREA_CLASS}
                     />
                   </div>
 
@@ -247,7 +251,7 @@ export default function FieldTripsPage() {
                     <span className="text-[10px] font-bold text-dark-gray block border-b border-cream pb-1">
                       Student Reflections
                     </span>
-                    {[1, 2, 3, 4].map((childIdx) => {
+                    {CHILD_INDICES.map((childIdx) => {
                       const name = getChildName(childIdx);
                       const color = childColors[childIdx];
                       return (
@@ -275,7 +279,7 @@ export default function FieldTripsPage() {
                             value={getValue(`${baseKey}_c${childIdx}_reflection`)}
                             onChange={(e) => updateField(`${baseKey}_c${childIdx}_reflection`, e.target.value)}
                             placeholder={`${name}'s reflection / what they liked best`}
-                            className="flex-1 border border-light-gray rounded px-2.5 py-1 text-xs outline-none focus:border-primary"
+                            className={`flex-1 ${INLINE_INPUT_CLASS}`}
                           />
                         </div>
                       );

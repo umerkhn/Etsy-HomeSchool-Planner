@@ -24,7 +24,7 @@ export default function AccessGate({ children }) {
             </svg>
           </div>
 
-          <h1 className="font-[Playfair_Display] text-2xl font-bold text-charcoal mb-2">
+          <h1 className="font-display text-2xl font-bold text-charcoal mb-2">
             Ultimate Homeschool Planner
           </h1>
           <p className="text-sm text-dark-gray mb-6">2025–2026 Academic Year</p>

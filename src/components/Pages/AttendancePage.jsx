@@ -1,8 +1,21 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import PageWrapper from '../Layout/PageWrapper';
 import { usePlanner } from '../../context/PlannerContext';
 import { MONTHS } from '../../utils/pageRegistry';
 import { childColors } from '../../utils/colorSystem';
+import { INLINE_TEXTAREA_CLASS } from '../Forms/formStyles';
+
+// Hoisted to module scope — stable references
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+const CHILD_INDICES = [1, 2, 3, 4];
+const WEEK_INDICES = [1, 2, 3, 4];
+const DAY_INDICES = [0, 1, 2, 3, 4];
+const STATUSES = [
+  { key: 'P', label: 'Present', color: 'bg-teal/20 text-teal border-teal/40' },
+  { key: 'A', label: 'Absent', color: 'bg-coral/20 text-coral border-coral/40' },
+  { key: 'S', label: 'Sick', color: 'bg-gold/20 text-gold border-gold/40' },
+  { key: 'E', label: 'Excused', color: 'bg-primary/20 text-primary border-primary/40' },
+];
 
 export default function AttendancePage() {
   const { getValue, updateField, getChildName } = usePlanner();
@@ -10,67 +23,56 @@ export default function AttendancePage() {
 
   const currentMonthObj = MONTHS.find((m) => m.key === selectedMonth) || MONTHS[0];
 
-  const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-  const STATUSES = [
-    { key: 'P', label: 'Present', color: 'bg-teal/20 text-teal border-teal/40' },
-    { key: 'A', label: 'Absent', color: 'bg-coral/20 text-coral border-coral/40' },
-    { key: 'S', label: 'Sick', color: 'bg-gold/20 text-gold border-gold/40' },
-    { key: 'E', label: 'Excused', color: 'bg-primary/20 text-primary border-primary/40' },
-  ];
-
   const getDayValue = (childIdx, weekIdx, dayIdx) => {
-    return getValue(`att_${selectedMonth}_c${childIdx}_w${weekIdx}_d${dayIdx}`, 'P'); // Default to Present
+    return getValue(`att_${selectedMonth}_c${childIdx}_w${weekIdx}_d${dayIdx}`, 'P');
   };
 
   const toggleDay = (childIdx, weekIdx, dayIdx) => {
     const current = getDayValue(childIdx, weekIdx, dayIdx);
     const currentIndex = STATUSES.findIndex((s) => s.key === current);
-    // Cycle: P -> A -> S -> E -> P
     const nextIndex = (currentIndex + 1) % STATUSES.length;
     updateField(`att_${selectedMonth}_c${childIdx}_w${weekIdx}_d${dayIdx}`, STATUSES[nextIndex].key);
   };
 
-  // Calculate totals for a child in the selected month
-  const getMonthTotals = (childIdx) => {
-    let present = 0;
-    let absent = 0;
-    let sick = 0;
-    let excused = 0;
-
-    for (let w = 1; w <= 4; w++) {
-      for (let d = 0; d < 5; d++) {
-        const val = getDayValue(childIdx, w, d);
-        if (val === 'P') present++;
-        else if (val === 'A') absent++;
-        else if (val === 'S') sick++;
-        else if (val === 'E') excused++;
-      }
-    }
-
-    return { present, absent, sick, excused };
-  };
-
-  // Calculate yearly totals for a child
-  const getYearlyTotals = (childIdx) => {
-    let present = 0;
-    let absent = 0;
-    let sick = 0;
-    let excused = 0;
-
-    MONTHS.forEach((m) => {
+  // Memoized monthly totals — only recalculated when data or selectedMonth changes
+  const monthTotals = useMemo(() => {
+    const result = {};
+    CHILD_INDICES.forEach((childIdx) => {
+      let present = 0, absent = 0, sick = 0, excused = 0;
       for (let w = 1; w <= 4; w++) {
         for (let d = 0; d < 5; d++) {
-          const val = getValue(`att_${m.key}_c${childIdx}_w${w}_d${d}`, 'P');
+          const val = getValue(`att_${selectedMonth}_c${childIdx}_w${w}_d${d}`, 'P');
           if (val === 'P') present++;
           else if (val === 'A') absent++;
           else if (val === 'S') sick++;
           else if (val === 'E') excused++;
         }
       }
+      result[childIdx] = { present, absent, sick, excused };
     });
+    return result;
+  }, [getValue, selectedMonth]);
 
-    return { present, absent, sick, excused };
-  };
+  // Memoized yearly totals — expensive computation cached
+  const yearTotals = useMemo(() => {
+    const result = {};
+    CHILD_INDICES.forEach((childIdx) => {
+      let present = 0, absent = 0, sick = 0, excused = 0;
+      MONTHS.forEach((m) => {
+        for (let w = 1; w <= 4; w++) {
+          for (let d = 0; d < 5; d++) {
+            const val = getValue(`att_${m.key}_c${childIdx}_w${w}_d${d}`, 'P');
+            if (val === 'P') present++;
+            else if (val === 'A') absent++;
+            else if (val === 'S') sick++;
+            else if (val === 'E') excused++;
+          }
+        }
+      });
+      result[childIdx] = { present, absent, sick, excused };
+    });
+    return result;
+  }, [getValue]);
 
   return (
     <PageWrapper title="Attendance Record 2025–2026" pageNum={57}>
@@ -92,11 +94,11 @@ export default function AttendancePage() {
       </div>
 
       <div className="space-y-10">
-        {[1, 2, 3, 4].map((childIdx) => {
+        {CHILD_INDICES.map((childIdx) => {
           const name = getChildName(childIdx);
           const color = childColors[childIdx];
-          const monthStats = getMonthTotals(childIdx);
-          const yearStats = getYearlyTotals(childIdx);
+          const monthStats = monthTotals[childIdx];
+          const yearStats = yearTotals[childIdx];
 
           return (
             <div
@@ -135,7 +137,7 @@ export default function AttendancePage() {
 
               {/* Attendance Grid */}
               <div className="space-y-3">
-                {[1, 2, 3, 4].map((weekIdx) => (
+                {WEEK_INDICES.map((weekIdx) => (
                   <div key={weekIdx} className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center py-2 border-b border-cream">
                     <div className="sm:col-span-3 text-xs font-semibold text-dark-gray">
                       Week {weekIdx}
@@ -160,7 +162,7 @@ export default function AttendancePage() {
                     </div>
                     <div className="sm:col-span-3 text-right text-xs text-dark-gray">
                       Present: <span className="font-bold text-teal">
-                        {[0, 1, 2, 3, 4].filter((d) => getDayValue(childIdx, weekIdx, d) === 'P').length} / 5 days
+                        {DAY_INDICES.filter((d) => getDayValue(childIdx, weekIdx, d) === 'P').length} / 5 days
                       </span>
                     </div>
                   </div>
@@ -196,7 +198,7 @@ export default function AttendancePage() {
               onChange={(e) => updateField(`att_notes_${selectedMonth}`, e.target.value)}
               placeholder="Enter notes about attendance, holidays, make-up days, etc."
               rows={3}
-              className="w-full border border-light-gray rounded-xl p-3 text-xs bg-white outline-none focus:border-primary transition-all resize-none"
+              className={INLINE_TEXTAREA_CLASS}
             />
           </div>
         </div>
