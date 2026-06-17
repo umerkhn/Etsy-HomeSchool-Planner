@@ -1,0 +1,41 @@
+:root {
+  /* Core Theme Colors */
+  --color-primary: #4A6FA5;
+  --color-primary-light: #5a7fb5;
+  --color-primary-dark: #3a5f95;
+  --color-cream: #F9F7F3;
+  --color-charcoal: #2C2C2C;
+
+  /* Child Color Mappings */
+  --color-coral: #E8A89D;
+  --color-coral-light: #f5d4ce;
+  --color-coral-bg: #fdf5f3;
+
+  --color-sage: #A8D4B8;
+  --color-sage-light: #d0eadb;
+  --color-sage-bg: #f3faf6;
+
+  --color-gold: #E8C8A0;
+  --color-gold-light: #f2dfc5;
+  --color-gold-bg: #fdf8f2;
+
+  --color-lavender: #D4B8E8;
+  --color-lavender-light: #e8d8f2;
+  --color-lavender-bg: #f9f3fd;
+
+  /* Neutrals & Accent Colors */
+  --color-light-gray: #E8E8E8;
+  --color-medium-gray: #B8B8B8;
+  --color-dark-gray: #5C5C5C;
+  --color-teal: #3A9B6A;
+
+  /* Typography Scale */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Poppins', system-ui, sans-serif;
+
+  /* Spacing Tokens */
+  --spacing-page: 2rem;
+  --spacing-section: 1.5rem;
+  --spacing-cell: 1rem;
+  --spacing-row: 0.75rem;
+}

@@ -1,32 +1,33 @@
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap');
+@import "./variables.css";
+@import "tailwindcss";
 
 /* ========== DESIGN SYSTEM TOKENS ========== */
 @theme {
-  --color-primary: #4A6FA5;
-  --color-primary-light: #5a7fb5;
-  --color-primary-dark: #3a5f95;
-  --color-cream: #F9F7F3;
-  --color-charcoal: #2C2C2C;
-  --color-coral: #E8A89D;
-  --color-coral-light: #f5d4ce;
-  --color-coral-bg: #fdf5f3;
-  --color-sage: #A8D4B8;
-  --color-sage-light: #d0eadb;
-  --color-sage-bg: #f3faf6;
-  --color-gold: #E8C8A0;
-  --color-gold-light: #f2dfc5;
-  --color-gold-bg: #fdf8f2;
-  --color-lavender: #D4B8E8;
-  --color-lavender-light: #e8d8f2;
-  --color-lavender-bg: #f9f3fd;
-  --color-light-gray: #E8E8E8;
-  --color-medium-gray: #B8B8B8;
-  --color-dark-gray: #5C5C5C;
-  --color-teal: #3A9B6A;
+  --color-primary: var(--color-primary);
+  --color-primary-light: var(--color-primary-light);
+  --color-primary-dark: var(--color-primary-dark);
+  --color-cream: var(--color-cream);
+  --color-charcoal: var(--color-charcoal);
+  --color-coral: var(--color-coral);
+  --color-coral-light: var(--color-coral-light);
+  --color-coral-bg: var(--color-coral-bg);
+  --color-sage: var(--color-sage);
+  --color-sage-light: var(--color-sage-light);
+  --color-sage-bg: var(--color-sage-bg);
+  --color-gold: var(--color-gold);
+  --color-gold-light: var(--color-gold-light);
+  --color-gold-bg: var(--color-gold-bg);
+  --color-lavender: var(--color-lavender);
+  --color-lavender-light: var(--color-lavender-light);
+  --color-lavender-bg: var(--color-lavender-bg);
+  --color-light-gray: var(--color-light-gray);
+  --color-medium-gray: var(--color-medium-gray);
+  --color-dark-gray: var(--color-dark-gray);
+  --color-teal: var(--color-teal);
 
-  --font-display: 'Playfair Display', Georgia, serif;
-  --font-body: 'Poppins', system-ui, sans-serif;
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
 }
 
 /* ========== BASE STYLES ========== */

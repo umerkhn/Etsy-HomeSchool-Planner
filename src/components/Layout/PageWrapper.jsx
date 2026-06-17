@@ -7,7 +7,7 @@ export default function PageWrapper({ children, title, pageNum, colorBar }) {
 
   return (
     <div className="animate-fade-in px-4 sm:px-6 lg:px-8 py-6">
-      <div id="planner-content" className="page-wrapper max-w-4xl mx-auto bg-white rounded-2xl shadow-sm border border-light-gray/40 overflow-hidden">
+      <article id="planner-content" className="page-wrapper max-w-4xl mx-auto bg-white rounded-2xl shadow-sm border border-light-gray/40 overflow-hidden">
         {/* Color bar accent */}
         {colorBar && (
           <div
@@ -30,7 +30,7 @@ export default function PageWrapper({ children, title, pageNum, colorBar }) {
 
           {children}
         </div>
-      </div>
+      </article>
 
       {/* Sticky Glassmorphic PDF download footer */}
       <div className="pdf-button fixed bottom-6 right-6 z-20 no-print">
