@@ -4,17 +4,18 @@ import { usePlanner } from '../../context/PlannerContext';
 import { MONTHS } from '../../utils/pageRegistry';
 import { childColors } from '../../utils/colorSystem';
 import { INLINE_TEXTAREA_CLASS } from '../Forms/formStyles';
+import { Card } from '../UI/Card';
+import { Badge } from '../UI/Badge';
 
-// Hoisted to module scope — stable references
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 const CHILD_INDICES = [1, 2, 3, 4];
 const WEEK_INDICES = [1, 2, 3, 4];
 const DAY_INDICES = [0, 1, 2, 3, 4];
 const STATUSES = [
-  { key: 'P', label: 'Present', color: 'bg-teal/20 text-teal border-teal/40' },
-  { key: 'A', label: 'Absent', color: 'bg-coral/20 text-coral border-coral/40' },
-  { key: 'S', label: 'Sick', color: 'bg-gold/20 text-gold border-gold/40' },
-  { key: 'E', label: 'Excused', color: 'bg-primary/20 text-primary border-primary/40' },
+  { key: 'P', label: 'Present', color: 'bg-teal/10 text-teal border-teal/20 hover:bg-teal/20' },
+  { key: 'A', label: 'Absent', color: 'bg-coral/10 text-coral border-coral/20 hover:bg-coral/20' },
+  { key: 'S', label: 'Sick', color: 'bg-gold/10 text-gold-dark border-gold/30 hover:bg-gold/20' },
+  { key: 'E', label: 'Excused', color: 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20' },
 ];
 
 export default function AttendancePage() {
@@ -34,7 +35,6 @@ export default function AttendancePage() {
     updateField(`att_${selectedMonth}_c${childIdx}_w${weekIdx}_d${dayIdx}`, STATUSES[nextIndex].key);
   };
 
-  // Memoized monthly totals — only recalculated when data or selectedMonth changes
   const monthTotals = useMemo(() => {
     const result = {};
     CHILD_INDICES.forEach((childIdx) => {
@@ -53,7 +53,6 @@ export default function AttendancePage() {
     return result;
   }, [getValue, selectedMonth]);
 
-  // Memoized yearly totals — expensive computation cached
   const yearTotals = useMemo(() => {
     const result = {};
     CHILD_INDICES.forEach((childIdx) => {
@@ -75,17 +74,18 @@ export default function AttendancePage() {
   }, [getValue]);
 
   return (
-    <PageWrapper title="Attendance Record 2025–2026" pageNum={57}>
-      {/* Month Selector Tabs */}
-      <div className="flex flex-wrap gap-1 mb-8 border-b border-light-gray pb-2 justify-center sm:justify-start">
+    <PageWrapper title="Attendance Tracker" description="Track daily attendance, absences, and sick days.">
+      
+      {/* Segmented Control for Months */}
+      <div className="flex flex-wrap gap-1 mb-8 bg-light-gray/30 p-1.5 rounded-xl w-fit">
         {MONTHS.map((m) => (
           <button
             key={m.key}
             onClick={() => setSelectedMonth(m.key)}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+            className={`px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all uppercase tracking-wider ${
               selectedMonth === m.key
-                ? 'bg-primary text-white shadow-sm'
-                : 'text-dark-gray hover:bg-light-gray/50 hover:text-charcoal'
+                ? 'bg-white text-charcoal shadow-sm'
+                : 'text-medium-gray hover:text-dark-gray'
             }`}
           >
             {m.label.split(' ')[0]}
@@ -93,66 +93,68 @@ export default function AttendancePage() {
         ))}
       </div>
 
-      <div className="space-y-10">
+      <div className="space-y-8">
         {CHILD_INDICES.map((childIdx) => {
-          const name = getChildName(childIdx);
+          const name = getChildName(childIdx) || `Student ${childIdx}`;
           const color = childColors[childIdx];
           const monthStats = monthTotals[childIdx];
           const yearStats = yearTotals[childIdx];
 
           return (
-            <div
-              key={childIdx}
-              className="bg-white rounded-2xl p-6 border-l-4 shadow-sm border-light-gray"
-              style={{ borderLeftColor: color.hex }}
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <div>
-                  <h3 className="text-lg font-bold text-charcoal">{name}</h3>
-                  <p className="text-xs text-medium-gray mt-0.5">
-                    Attendance tracking for {currentMonthObj.label}
-                  </p>
+            <Card key={childIdx} className="border-l-4 overflow-visible" style={{ borderLeftColor: color.hex }}>
+              <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-6 mb-8 border-b border-light-gray/40 pb-4">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-8 h-8 rounded border border-light-gray shadow-sm flex items-center justify-center text-xs font-bold"
+                    style={{ backgroundColor: color.bg, color: color.hex }}
+                  >
+                    {childIdx}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-charcoal text-base">{name}</h3>
+                    <p className="text-[10px] text-medium-gray uppercase tracking-wider mt-0.5">
+                      {currentMonthObj.label} Record
+                    </p>
+                  </div>
                 </div>
 
-                {/* Stats summary */}
-                <div className="flex gap-4 text-xs font-semibold">
-                  <div className="bg-cream rounded-xl px-3 py-2 text-center border border-light-gray">
-                    <span className="text-dark-gray block font-normal text-[10px] uppercase">This Month</span>
-                    <span className="text-teal">{monthStats.present}P</span>
-                    <span className="text-medium-gray mx-1">/</span>
-                    <span className="text-coral">{monthStats.absent}A</span>
-                    <span className="text-medium-gray mx-1">/</span>
-                    <span className="text-gold">{monthStats.sick}S</span>
-                    <span className="text-medium-gray mx-1">/</span>
-                    <span className="text-primary">{monthStats.excused}E</span>
+                <div className="flex flex-wrap gap-3">
+                  <div className="bg-cream/40 rounded-lg px-3 py-2 border border-light-gray/60 flex items-center gap-4">
+                    <span className="text-[10px] font-bold text-medium-gray uppercase tracking-wider">This Month</span>
+                    <div className="flex gap-2 text-xs font-bold font-mono">
+                      <span className="text-teal">{monthStats.present}P</span>
+                      <span className="text-coral">{monthStats.absent}A</span>
+                      <span className="text-gold-dark">{monthStats.sick}S</span>
+                      <span className="text-primary">{monthStats.excused}E</span>
+                    </div>
                   </div>
-                  <div className="bg-primary/5 rounded-xl px-3 py-2 text-center border border-primary/10">
-                    <span className="text-primary block font-normal text-[10px] uppercase">Yearly Total</span>
-                    <span className="text-teal">{yearStats.present} Present</span>
-                    <span className="text-medium-gray mx-2">|</span>
-                    <span className="text-coral">{yearStats.absent + yearStats.sick + yearStats.excused} Absent</span>
+                  <div className="bg-charcoal text-white rounded-lg px-3 py-2 flex items-center gap-4 shadow-sm">
+                    <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider">YTD Total</span>
+                    <div className="flex gap-2 text-xs font-bold font-mono">
+                      <span className="text-teal">{yearStats.present}P</span>
+                      <span className="text-coral">{yearStats.absent + yearStats.sick + yearStats.excused} Out</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Attendance Grid */}
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {WEEK_INDICES.map((weekIdx) => (
-                  <div key={weekIdx} className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center py-2 border-b border-cream">
-                    <div className="sm:col-span-3 text-xs font-semibold text-dark-gray">
-                      Week {weekIdx}
+                  <div key={weekIdx} className="flex flex-col sm:flex-row sm:items-center gap-4 p-3 bg-cream/20 rounded-xl border border-transparent hover:border-light-gray/60 transition-colors">
+                    <div className="w-16">
+                      <Badge variant="gray">Week {weekIdx}</Badge>
                     </div>
-                    <div className="sm:col-span-6 flex gap-2 justify-between max-w-md">
+                    <div className="flex-1 flex gap-2 justify-between max-w-lg">
                       {DAYS.map((dayName, dayIdx) => {
                         const val = getDayValue(childIdx, weekIdx, dayIdx);
                         const statusObj = STATUSES.find((s) => s.key === val) || STATUSES[0];
                         return (
-                          <div key={dayIdx} className="flex flex-col items-center flex-1">
-                            <span className="text-[10px] font-medium text-medium-gray mb-1">{dayName}</span>
+                          <div key={dayIdx} className="flex flex-col items-center flex-1 group">
+                            <span className="text-[9px] font-bold text-medium-gray uppercase tracking-wider mb-1.5">{dayName}</span>
                             <button
                               onClick={() => toggleDay(childIdx, weekIdx, dayIdx)}
-                              className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold border transition-all shadow-sm ${statusObj.color}`}
-                              title="Click to toggle status (P -> A -> S -> E)"
+                              className={`w-10 h-10 rounded-xl flex items-center justify-center text-xs font-bold border transition-all shadow-sm ${statusObj.color}`}
+                              title="Toggle Status"
                             >
                               {val}
                             </button>
@@ -160,47 +162,47 @@ export default function AttendancePage() {
                         );
                       })}
                     </div>
-                    <div className="sm:col-span-3 text-right text-xs text-dark-gray">
-                      Present: <span className="font-bold text-teal">
-                        {DAY_INDICES.filter((d) => getDayValue(childIdx, weekIdx, d) === 'P').length} / 5 days
+                    <div className="w-24 text-right pt-6 sm:pt-0">
+                      <span className="text-[10px] font-bold text-medium-gray uppercase tracking-wider block">Present</span>
+                      <span className="text-sm font-bold text-teal font-mono">
+                        {DAY_INDICES.filter((d) => getDayValue(childIdx, weekIdx, d) === 'P').length} / 5
                       </span>
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
           );
         })}
 
-        {/* Legend & Notes */}
-        <div className="mt-8 pt-6 border-t border-light-gray grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <h4 className="text-xs font-bold text-charcoal uppercase tracking-wider mb-3">Legend</h4>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+          <Card className="bg-cream/30">
+            <h4 className="text-[11px] font-bold text-charcoal uppercase tracking-wider mb-4">Status Legend</h4>
+            <div className="grid grid-cols-2 gap-3">
               {STATUSES.map((s) => (
-                <div key={s.key} className="flex items-center gap-2">
-                  <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border ${s.color}`}>
+                <div key={s.key} className="flex items-center gap-3">
+                  <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold border ${s.color}`}>
                     {s.key}
                   </span>
-                  <span className="text-xs font-medium text-dark-gray">{s.label}</span>
+                  <span className="text-xs font-semibold text-dark-gray">{s.label}</span>
                 </div>
               ))}
             </div>
-            <p className="text-[11px] text-medium-gray mt-4 italic">
-              * Click on the day bubble to cycle through status: Present (P), Absent (A), Sick (S), and Excused (E).
+            <p className="text-[10px] text-medium-gray mt-5 border-t border-light-gray/60 pt-3">
+              Click the day bubble to cycle through status options.
             </p>
-          </div>
+          </Card>
 
-          <div>
-            <h4 className="text-xs font-bold text-charcoal uppercase tracking-wider mb-2">Monthly Attendance Notes</h4>
+          <Card className="bg-cream/30">
+            <h4 className="text-[11px] font-bold text-charcoal uppercase tracking-wider mb-3">Monthly Notes</h4>
             <textarea
               value={getValue(`att_notes_${selectedMonth}`, '')}
               onChange={(e) => updateField(`att_notes_${selectedMonth}`, e.target.value)}
-              placeholder="Enter notes about attendance, holidays, make-up days, etc."
-              rows={3}
+              placeholder="Holidays, make-up days, patterns..."
+              rows={5}
               className={INLINE_TEXTAREA_CLASS}
             />
-          </div>
+          </Card>
         </div>
       </div>
     </PageWrapper>

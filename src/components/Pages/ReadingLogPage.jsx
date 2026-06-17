@@ -3,15 +3,14 @@ import PageWrapper from '../Layout/PageWrapper';
 import { usePlanner } from '../../context/PlannerContext';
 import { childColors } from '../../utils/colorSystem';
 import { INLINE_INPUT_CLASS, INLINE_TEXTAREA_CLASS } from '../Forms/formStyles';
+import { Card } from '../UI/Card';
 
-// Hoisted to module scope
 const ROWS = Array.from({ length: 15 }, (_, i) => i);
 const CHILD_INDICES = [1, 2, 3, 4];
 
 export default function ReadingLogPage() {
   const { getValue, updateField, getChildName } = usePlanner();
 
-  // Calculate totals for a child
   const getTotals = (childIdx) => {
     let booksCount = 0;
     let pagesSum = 0;
@@ -33,97 +32,99 @@ export default function ReadingLogPage() {
   };
 
   return (
-    <PageWrapper title="Reading Log 2025–2026" pageNum={59}>
+    <PageWrapper 
+      title="Reading Log" 
+      description="Track books read, page count, and reading levels for each student."
+    >
       <div className="space-y-12">
         {CHILD_INDICES.map((childIdx) => {
-          const name = getChildName(childIdx);
+          const name = getChildName(childIdx) || `Student ${childIdx}`;
           const color = childColors[childIdx];
           const totals = getTotals(childIdx);
 
           return (
-            <div
-              key={childIdx}
-              className="bg-white rounded-2xl p-6 border-l-4 shadow-sm border-light-gray"
-              style={{ borderLeftColor: color.hex }}
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                <div>
-                  <h3 className="text-lg font-bold text-charcoal">{name}</h3>
-                  <p className="text-xs text-medium-gray mt-0.5">
-                    Track books read, page count, and reading levels
-                  </p>
+            <Card key={childIdx} className="border-l-4 overflow-visible" style={{ borderLeftColor: color.hex }}>
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6 border-b border-light-gray/40 pb-4">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-8 h-8 rounded border border-light-gray shadow-sm flex items-center justify-center text-xs font-bold"
+                    style={{ backgroundColor: color.bg, color: color.hex }}
+                  >
+                    {childIdx}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-charcoal text-base">{name}</h3>
+                  </div>
                 </div>
 
-                {/* Auto-calculated totals */}
-                <div className="flex gap-3 text-xs font-semibold">
-                  <div className="bg-cream rounded-xl px-3 py-2 text-center border border-light-gray">
-                    <span className="text-medium-gray block font-normal text-[10px] uppercase">Books Logged</span>
-                    <span className="text-charcoal font-bold text-sm">{totals.logged}</span>
+                <div className="flex flex-wrap gap-3 text-xs font-bold font-mono">
+                  <div className="bg-cream/40 rounded-lg px-3 py-1.5 border border-light-gray/60 flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-medium-gray uppercase tracking-wider font-body">Logged:</span>
+                    <span className="text-charcoal">{totals.logged}</span>
                   </div>
-                  <div className="bg-teal/10 rounded-xl px-3 py-2 text-center border border-teal/10">
-                    <span className="text-teal block font-normal text-[10px] uppercase">Completed (✓)</span>
-                    <span className="text-teal font-bold text-sm">{totals.completed}</span>
+                  <div className="bg-teal/10 rounded-lg px-3 py-1.5 border border-teal/20 flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-teal uppercase tracking-wider font-body">Completed:</span>
+                    <span className="text-teal">{totals.completed}</span>
                   </div>
-                  <div className="bg-primary/10 rounded-xl px-3 py-2 text-center border border-primary/10">
-                    <span className="text-primary block font-normal text-[10px] uppercase">Total Pages</span>
-                    <span className="text-primary font-bold text-sm">{totals.pages}</span>
+                  <div className="bg-charcoal text-white rounded-lg px-3 py-1.5 shadow-sm flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider font-body">Pages:</span>
+                    <span>{totals.pages}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Table */}
-              <div className="overflow-x-auto max-h-[350px] overflow-y-auto pr-1 border border-cream rounded-xl">
-                <table className="w-full text-sm text-left">
-                  <thead className="sticky top-0 bg-white shadow-sm z-10">
-                    <tr className="border-b border-light-gray">
-                      <th className="py-2 px-2 text-xs font-semibold text-dark-gray w-24">Date</th>
-                      <th className="py-2 px-2 text-xs font-semibold text-dark-gray">Book Title</th>
-                      <th className="py-2 px-2 text-xs font-semibold text-dark-gray">Author</th>
-                      <th className="py-2 px-2 text-xs font-semibold text-dark-gray w-20">Pages</th>
-                      <th className="py-2 px-2 text-xs font-semibold text-dark-gray w-24">Level</th>
-                      <th className="py-2 px-2 text-xs font-semibold text-dark-gray text-center w-10">✓</th>
+              <div className="overflow-x-auto max-h-[400px] overflow-y-auto border border-light-gray/60 rounded-xl custom-scrollbar shadow-sm">
+                <table className="w-full text-sm text-left border-collapse">
+                  <thead className="sticky top-0 bg-cream z-10 shadow-sm border-b border-light-gray/60">
+                    <tr>
+                      <th className="py-2.5 px-3 text-[10px] font-semibold text-medium-gray uppercase tracking-wider w-20">Date</th>
+                      <th className="py-2.5 px-3 text-[10px] font-semibold text-medium-gray uppercase tracking-wider">Book Title</th>
+                      <th className="py-2.5 px-3 text-[10px] font-semibold text-medium-gray uppercase tracking-wider">Author</th>
+                      <th className="py-2.5 px-3 text-[10px] font-semibold text-medium-gray uppercase tracking-wider w-20 text-center">Pages</th>
+                      <th className="py-2.5 px-3 text-[10px] font-semibold text-medium-gray uppercase tracking-wider w-20 text-center">Level</th>
+                      <th className="py-2.5 px-4 text-[10px] font-semibold text-medium-gray uppercase tracking-wider w-12 text-center">✓</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-light-gray/40">
                     {ROWS.map((rowIdx) => (
-                      <tr key={rowIdx} className="border-b border-cream hover:bg-cream/20 transition-colors">
-                        <td className="py-1 px-1">
+                      <tr key={rowIdx} className="hover:bg-cream/30 transition-colors">
+                        <td className="py-1 px-2 border-r border-light-gray/40">
                           <input
                             type="text"
                             value={getValue(`read_date_c${childIdx}_r${rowIdx}`)}
                             onChange={(e) => updateField(`read_date_c${childIdx}_r${rowIdx}`, e.target.value)}
                             placeholder="M/D"
-                            className={`${INLINE_INPUT_CLASS} text-center font-normal`}
+                            className={`${INLINE_INPUT_CLASS} text-center font-mono`}
                           />
                         </td>
-                        <td className="py-1 px-1">
+                        <td className="py-1 px-2">
                           <input
                             type="text"
                             value={getValue(`read_title_c${childIdx}_r${rowIdx}`)}
                             onChange={(e) => updateField(`read_title_c${childIdx}_r${rowIdx}`, e.target.value)}
-                            placeholder="Book title"
+                            placeholder="Title..."
                             className={`${INLINE_INPUT_CLASS} font-medium`}
                           />
                         </td>
-                        <td className="py-1 px-1">
+                        <td className="py-1 px-2">
                           <input
                             type="text"
                             value={getValue(`read_author_c${childIdx}_r${rowIdx}`)}
                             onChange={(e) => updateField(`read_author_c${childIdx}_r${rowIdx}`, e.target.value)}
-                            placeholder="Author name"
+                            placeholder="Author..."
                             className={INLINE_INPUT_CLASS}
                           />
                         </td>
-                        <td className="py-1 px-1">
+                        <td className="py-1 px-2 border-l border-light-gray/40">
                           <input
                             type="number"
                             value={getValue(`read_pages_c${childIdx}_r${rowIdx}`)}
                             onChange={(e) => updateField(`read_pages_c${childIdx}_r${rowIdx}`, e.target.value)}
-                            placeholder="120"
-                            className={`${INLINE_INPUT_CLASS} text-center`}
+                            placeholder="0"
+                            className={`${INLINE_INPUT_CLASS} text-center font-mono`}
                           />
                         </td>
-                        <td className="py-1 px-1">
+                        <td className="py-1 px-2 border-l border-light-gray/40">
                           <input
                             type="text"
                             value={getValue(`read_level_c${childIdx}_r${rowIdx}`)}
@@ -132,12 +133,12 @@ export default function ReadingLogPage() {
                             className={`${INLINE_INPUT_CLASS} text-center`}
                           />
                         </td>
-                        <td className="py-1 px-1 text-center">
+                        <td className="py-1 px-4 text-center border-l border-light-gray/40 bg-cream/20">
                           <input
                             type="checkbox"
                             checked={!!getValue(`read_check_c${childIdx}_r${rowIdx}`, false)}
                             onChange={(e) => updateField(`read_check_c${childIdx}_r${rowIdx}`, e.target.checked)}
-                            className="w-4 h-4 accent-primary"
+                            className="w-4 h-4 rounded border-light-gray text-charcoal focus:ring-charcoal/20 cursor-pointer"
                           />
                         </td>
                       </tr>
@@ -145,58 +146,58 @@ export default function ReadingLogPage() {
                   </tbody>
                 </table>
               </div>
-            </div>
+            </Card>
           );
         })}
 
         {/* Family Book Club */}
-        <div className="bg-cream rounded-2xl p-6 border border-light-gray">
-          <h3 className="text-sm font-semibold text-primary uppercase tracking-wider mb-4">
+        <Card className="bg-cream/40">
+          <h3 className="text-[11px] font-bold text-charcoal uppercase tracking-wider mb-6 flex items-center gap-2 border-b border-light-gray/60 pb-3">
             📖 Family Book Club & Shared Reading
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <div>
-              <label className="text-xs font-medium text-dark-gray block mb-1">Book Title</label>
+              <label className="text-[10px] font-bold text-medium-gray uppercase tracking-wider block mb-1.5">Book Title</label>
               <input
                 type="text"
                 value={getValue('fb_title')}
                 onChange={(e) => updateField('fb_title', e.target.value)}
                 placeholder="Shared book title"
-                className={INLINE_INPUT_CLASS}
+                className={`${INLINE_INPUT_CLASS} bg-white shadow-sm font-medium`}
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-dark-gray block mb-1">Author</label>
+              <label className="text-[10px] font-bold text-medium-gray uppercase tracking-wider block mb-1.5">Author</label>
               <input
                 type="text"
                 value={getValue('fb_author')}
                 onChange={(e) => updateField('fb_author', e.target.value)}
                 placeholder="Author name"
-                className={INLINE_INPUT_CLASS}
+                className={`${INLINE_INPUT_CLASS} bg-white shadow-sm`}
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-dark-gray block mb-1">Dates Read</label>
+              <label className="text-[10px] font-bold text-medium-gray uppercase tracking-wider block mb-1.5">Dates Read</label>
               <input
                 type="text"
                 value={getValue('fb_dates')}
                 onChange={(e) => updateField('fb_dates', e.target.value)}
-                placeholder="e.g., Oct 1 - Oct 25"
-                className={INLINE_INPUT_CLASS}
+                placeholder="e.g. Oct 1 - Oct 25"
+                className={`${INLINE_INPUT_CLASS} bg-white shadow-sm`}
               />
             </div>
           </div>
           <div>
-            <label className="text-xs font-medium text-dark-gray block mb-1">Discussion & Reading Notes</label>
+            <label className="text-[10px] font-bold text-medium-gray uppercase tracking-wider block mb-1.5">Discussion & Reading Notes</label>
             <textarea
               value={getValue('fb_notes')}
               onChange={(e) => updateField('fb_notes', e.target.value)}
-              placeholder="What questions did you discuss? What were key takeaways or favorite sections?"
+              placeholder="Key takeaways, favorite sections, or questions discussed..."
               rows={4}
-              className={INLINE_TEXTAREA_CLASS}
+              className={`${INLINE_TEXTAREA_CLASS} bg-white shadow-sm`}
             />
           </div>
-        </div>
+        </Card>
       </div>
     </PageWrapper>
   );

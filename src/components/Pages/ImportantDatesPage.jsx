@@ -1,6 +1,7 @@
 import PageWrapper from '../Layout/PageWrapper';
 import TextInput from '../Forms/TextInput';
 import DateInput from '../Forms/DateInput';
+import { Card } from '../UI/Card';
 
 const HOLIDAYS = [
   { label: 'New Year\'s Day', date: 'January 1, 2026' },
@@ -18,106 +19,93 @@ const HOLIDAYS = [
 
 export default function ImportantDatesPage() {
   return (
-    <PageWrapper title="Important Dates & Holidays 2025–2026" pageNum={8}>
-      <div className="space-y-8">
-        {/* Pre-filled Holidays */}
-        <div>
-          <h3 className="text-sm font-semibold text-charcoal uppercase tracking-wider mb-4">
-            Holidays & Observances
-          </h3>
-          <div className="space-y-2">
-            {HOLIDAYS.map((h, i) => (
-              <div key={i} className="flex items-center gap-3 py-1">
-                <span className="text-sm">📅</span>
-                <TextInput
-                  field={`holiday_name_${i}`}
-                  placeholder={h.label}
-                  className="flex-1"
-                />
-                <TextInput
-                  field={`holiday_date_${i}`}
-                  placeholder={h.date}
-                  className="w-48"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <hr className="border-light-gray" />
-
-        {/* Family Dates */}
-        <div>
-          <h3 className="text-sm font-semibold text-charcoal uppercase tracking-wider mb-4">
-            Family Dates to Remember
-          </h3>
-          <div className="space-y-2">
-            {[0, 1, 2, 3, 4].map((i) => (
-              <div key={i} className="flex items-center gap-3">
-                <span className="text-sm">📅</span>
-                <TextInput field={`family_date_name_${i}`} placeholder="Event name" className="flex-1" />
-                <DateInput field={`family_date_${i}`} className="w-44" />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <hr className="border-light-gray" />
-
-        {/* Testing/Assessment Dates */}
-        <div>
-          <h3 className="text-sm font-semibold text-charcoal uppercase tracking-wider mb-4">
-            Testing/Assessment Dates
-          </h3>
-          <div className="space-y-2">
-            {[0, 1, 2].map((i) => (
-              <div key={i} className="flex items-center gap-3">
-                <span className="text-sm">📅</span>
-                <TextInput field={`test_date_name_${i}`} placeholder="Test/Assessment" className="flex-1" />
-                <DateInput field={`test_date_${i}`} className="w-44" />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <hr className="border-light-gray" />
-
-        {/* Field Trips Planned */}
-        <div>
-          <h3 className="text-sm font-semibold text-charcoal uppercase tracking-wider mb-4">
-            Field Trips Planned
-          </h3>
-          <div className="space-y-2">
-            {[0, 1, 2].map((i) => (
-              <div key={i} className="flex items-center gap-3">
-                <span className="text-sm">📅</span>
-                <TextInput field={`ft_planned_name_${i}`} placeholder="Trip destination" className="flex-1" />
-                <DateInput field={`ft_planned_date_${i}`} className="w-44" />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <hr className="border-light-gray" />
-
-        {/* Important Deadlines */}
-        <div>
-          <h3 className="text-sm font-semibold text-charcoal uppercase tracking-wider mb-4">
-            Important Deadlines
-          </h3>
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <span className="text-sm">📅</span>
-              <span className="text-sm text-charcoal w-48">Transcripts/Records Due:</span>
-              <DateInput field="deadline_transcripts" className="flex-1" />
+    <PageWrapper 
+      title="Important Dates & Holidays" 
+      description="Track observances, family events, and academic deadlines."
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        {/* Left Col */}
+        <div className="space-y-6">
+          <Card>
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-sm font-bold text-charcoal uppercase tracking-wider">Holidays & Observances</h3>
+              <span className="text-[10px] font-semibold text-medium-gray px-2 py-0.5 bg-cream rounded-md">2025-2026</span>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-sm">📅</span>
-              <span className="text-sm text-charcoal w-48">Report Card Due:</span>
-              <DateInput field="deadline_report_card" className="flex-1" />
+            <div className="space-y-2">
+              {HOLIDAYS.map((h, i) => (
+                <div key={i} className="flex flex-col sm:flex-row sm:items-center gap-2 py-1">
+                  <TextInput
+                    field={`holiday_name_${i}`}
+                    placeholder={h.label}
+                    className="flex-1"
+                  />
+                  <TextInput
+                    field={`holiday_date_${i}`}
+                    placeholder={h.date}
+                    className="sm:w-40 shrink-0"
+                  />
+                </div>
+              ))}
             </div>
-          </div>
+          </Card>
         </div>
+
+        {/* Right Col */}
+        <div className="space-y-6">
+          
+          <Card>
+            <h3 className="text-sm font-bold text-charcoal uppercase tracking-wider mb-4">Family Dates to Remember</h3>
+            <div className="space-y-2">
+              {[0, 1, 2, 3, 4].map((i) => (
+                <div key={i} className="flex flex-col sm:flex-row sm:items-center gap-2">
+                  <TextInput field={`family_date_name_${i}`} placeholder="Event name (e.g. Birthday)" className="flex-1" />
+                  <DateInput field={`family_date_${i}`} className="sm:w-40 shrink-0" />
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          <Card>
+            <h3 className="text-sm font-bold text-charcoal uppercase tracking-wider mb-4">Testing & Assessments</h3>
+            <div className="space-y-2">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="flex flex-col sm:flex-row sm:items-center gap-2">
+                  <TextInput field={`test_date_name_${i}`} placeholder="Assessment type" className="flex-1" />
+                  <DateInput field={`test_date_${i}`} className="sm:w-40 shrink-0" />
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          <Card>
+            <h3 className="text-sm font-bold text-charcoal uppercase tracking-wider mb-4">Field Trips Planned</h3>
+            <div className="space-y-2">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="flex flex-col sm:flex-row sm:items-center gap-2">
+                  <TextInput field={`ft_planned_name_${i}`} placeholder="Destination" className="flex-1" />
+                  <DateInput field={`ft_planned_date_${i}`} className="sm:w-40 shrink-0" />
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          <Card className="bg-cream/40">
+            <h3 className="text-sm font-bold text-charcoal uppercase tracking-wider mb-4">Academic Deadlines</h3>
+            <div className="space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <span className="text-sm font-medium text-dark-gray flex-1">Transcripts/Records Due:</span>
+                <DateInput field="deadline_transcripts" className="sm:w-40 shrink-0" />
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <span className="text-sm font-medium text-dark-gray flex-1">Report Card Due:</span>
+                <DateInput field="deadline_report_card" className="sm:w-40 shrink-0" />
+              </div>
+            </div>
+          </Card>
+
+        </div>
+
       </div>
     </PageWrapper>
   );

@@ -1,6 +1,8 @@
 import PageWrapper from '../Layout/PageWrapper';
 import { usePlanner } from '../../context/PlannerContext';
 import { childColors } from '../../utils/colorSystem';
+import { Card } from '../UI/Card';
+import { INLINE_TEXTAREA_CLASS } from '../Forms/formStyles';
 
 export default function PortfolioPage() {
   const { getValue, updateField, getChildName } = usePlanner();
@@ -9,114 +11,114 @@ export default function PortfolioPage() {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Convert file to Base64 (or prompt to paste a URL)
     const reader = new FileReader();
     reader.onloadend = () => {
-      // Store Base64 string in state
       updateField(`portfolio_img_c${childIdx}`, reader.result);
     };
     reader.readAsDataURL(file);
   };
 
   return (
-    <PageWrapper title="Student Milestones & Memories" pageNum={64}>
-      <div className="space-y-16">
+    <PageWrapper 
+      title="Portfolio & Memories" 
+      description="Document milestones, major projects, and special memories for the year."
+    >
+      <div className="space-y-12">
         {[1, 2, 3, 4].map((childIdx) => {
-          const name = getChildName(childIdx);
+          const name = getChildName(childIdx) || `Student ${childIdx}`;
           const color = childColors[childIdx];
           const imageSrc = getValue(`portfolio_img_c${childIdx}`, '');
 
           return (
-            <div
-              key={childIdx}
-              className="bg-white rounded-2xl p-6 border-l-4 shadow-sm border-light-gray"
-              style={{ borderLeftColor: color.hex }}
-            >
-              <div className="mb-6">
-                <h3 className="text-lg font-bold text-charcoal">{name}</h3>
-                <p className="text-xs text-medium-gray mt-0.5">
-                  A keepsake page to document milestones, memories, and accomplishments
-                </p>
+            <Card key={childIdx} className="border-l-4" style={{ borderLeftColor: color.hex }}>
+              <div className="flex items-center gap-3 mb-6 border-b border-light-gray/40 pb-4">
+                <div
+                  className="w-8 h-8 rounded border border-light-gray shadow-sm flex items-center justify-center text-xs font-bold"
+                  style={{ backgroundColor: color.bg, color: color.hex }}
+                >
+                  {childIdx}
+                </div>
+                <h3 className="font-bold text-charcoal text-base">{name}</h3>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
                 {/* Text fields - 3 columns on desktop */}
-                <div className="md:col-span-3 space-y-4">
+                <div className="md:col-span-3 space-y-6">
                   <div>
-                    <label className="text-[10px] font-semibold text-dark-gray block mb-1">
-                      Achievement Highlights This Year
+                    <label className="text-[10px] font-bold text-charcoal uppercase tracking-wider block mb-2">
+                      Achievement Highlights
                     </label>
                     <textarea
                       value={getValue(`port_highlights_c${childIdx}`)}
                       onChange={(e) => updateField(`port_highlights_c${childIdx}`, e.target.value)}
-                      placeholder="Write about the major accomplishments and big wins this year..."
+                      placeholder="Major accomplishments and big wins..."
                       rows={3}
-                      className="w-full border border-light-gray rounded-xl p-3 text-xs outline-none focus:border-primary resize-none bg-white"
+                      className={`${INLINE_TEXTAREA_CLASS} bg-cream/30 shadow-sm border border-light-gray/40 hover:border-light-gray`}
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                      <label className="text-[10px] font-semibold text-dark-gray block mb-1">
+                      <label className="text-[10px] font-bold text-medium-gray uppercase tracking-wider block mb-2">
                         Skills Mastered
                       </label>
                       <textarea
                         value={getValue(`port_skills_c${childIdx}`)}
                         onChange={(e) => updateField(`port_skills_c${childIdx}`, e.target.value)}
-                        placeholder="Academic or practical skills acquired..."
-                        rows={2}
-                        className="w-full border border-light-gray rounded-xl p-2 text-xs outline-none focus:border-primary resize-none bg-white"
+                        placeholder="Academic or practical skills..."
+                        rows={3}
+                        className={`${INLINE_TEXTAREA_CLASS} bg-cream/30 shadow-sm border border-light-gray/40 hover:border-light-gray`}
                       />
                     </div>
                     <div>
-                      <label className="text-[10px] font-semibold text-dark-gray block mb-1">
-                        Favorite Lesson / Project
+                      <label className="text-[10px] font-bold text-medium-gray uppercase tracking-wider block mb-2">
+                        Favorite Projects
                       </label>
                       <textarea
                         value={getValue(`port_fav_lesson_c${childIdx}`)}
                         onChange={(e) => updateField(`port_fav_lesson_c${childIdx}`, e.target.value)}
                         placeholder="What did they enjoy learning the most?"
-                        rows={2}
-                        className="w-full border border-light-gray rounded-xl p-2 text-xs outline-none focus:border-primary resize-none bg-white"
+                        rows={3}
+                        className={`${INLINE_TEXTAREA_CLASS} bg-cream/30 shadow-sm border border-light-gray/40 hover:border-light-gray`}
                       />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                      <label className="text-[10px] font-semibold text-dark-gray block mb-1">
+                      <label className="text-[10px] font-bold text-medium-gray uppercase tracking-wider block mb-2">
                         Growth Areas
                       </label>
                       <textarea
                         value={getValue(`port_growth_c${childIdx}`)}
                         onChange={(e) => updateField(`port_growth_c${childIdx}`, e.target.value)}
                         placeholder="Where was the biggest development seen?"
-                        rows={2}
-                        className="w-full border border-light-gray rounded-xl p-2 text-xs outline-none focus:border-primary resize-none bg-white"
+                        rows={3}
+                        className={`${INLINE_TEXTAREA_CLASS} bg-cream/30 shadow-sm border border-light-gray/40 hover:border-light-gray`}
                       />
                     </div>
                     <div>
-                      <label className="text-[10px] font-semibold text-dark-gray block mb-1">
-                        Memorable Moment
+                      <label className="text-[10px] font-bold text-medium-gray uppercase tracking-wider block mb-2">
+                        Memorable Moments
                       </label>
                       <textarea
                         value={getValue(`port_moment_c${childIdx}`)}
                         onChange={(e) => updateField(`port_moment_c${childIdx}`, e.target.value)}
-                        placeholder="Field trip, funny story, breakthrough..."
-                        rows={2}
-                        className="w-full border border-light-gray rounded-xl p-2 text-xs outline-none focus:border-primary resize-none bg-white"
+                        placeholder="Funny story, breakthrough, event..."
+                        rows={3}
+                        className={`${INLINE_TEXTAREA_CLASS} bg-cream/30 shadow-sm border border-light-gray/40 hover:border-light-gray`}
                       />
                     </div>
                   </div>
                 </div>
 
                 {/* Photo frame - 2 columns on desktop */}
-                <div className="md:col-span-2 flex flex-col items-center justify-center">
-                  <span className="text-[10px] font-semibold text-dark-gray block mb-2 self-start md:self-center">
-                    Annual Memory Photo
+                <div className="md:col-span-2 flex flex-col items-center justify-center bg-cream/20 rounded-2xl p-6 border border-light-gray/40">
+                  <span className="text-[10px] font-bold text-charcoal uppercase tracking-wider block mb-4 text-center">
+                    Memory Photo
                   </span>
 
-                  <div className="border-4 border-double border-light-gray bg-cream rounded-2xl p-4 w-full max-w-[240px] aspect-square flex flex-col items-center justify-center relative overflow-hidden group shadow-inner">
+                  <div className="border border-light-gray bg-white rounded-xl p-2 w-full max-w-[240px] aspect-square flex flex-col items-center justify-center relative overflow-hidden group shadow-sm">
                     {imageSrc ? (
                       <>
                         <img
@@ -126,40 +128,39 @@ export default function PortfolioPage() {
                         />
                         <button
                           onClick={() => updateField(`portfolio_img_c${childIdx}`, '')}
-                          className="absolute top-2 right-2 bg-coral text-white p-1 rounded-full text-xs shadow hover:scale-105 transition-transform"
+                          className="absolute top-3 right-3 bg-white/90 text-coral p-1.5 rounded-full text-xs shadow-sm hover:scale-110 transition-transform opacity-0 group-hover:opacity-100"
                           title="Remove Photo"
                         >
-                          ✕
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
                         </button>
                       </>
                     ) : (
                       <div className="text-center p-4">
-                        <svg
-                          className="w-8 h-8 mx-auto text-medium-gray mb-2"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="1.5"
-                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                          />
-                        </svg>
-                        <span className="text-[10px] text-dark-gray font-medium block">
-                          No photo selected
+                        <div className="w-12 h-12 bg-cream rounded-full flex items-center justify-center mx-auto mb-3">
+                          <svg
+                            className="w-5 h-5 text-medium-gray"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                        <span className="text-xs text-dark-gray font-bold block mb-1">
+                          No photo added
                         </span>
-                        <span className="text-[9px] text-medium-gray block mt-0.5">
-                          Drag & drop or click below
+                        <span className="text-[10px] text-medium-gray block">
+                          Upload a favorite memory from this year.
                         </span>
                       </div>
                     )}
                   </div>
 
-                  <div className="mt-3 flex gap-2 w-full max-w-[240px]">
-                    <label className="flex-1 bg-primary text-white text-center rounded-xl py-2 text-xs font-semibold cursor-pointer hover:bg-primary-light active:scale-95 transition-all shadow-sm">
-                      Upload File
+                  <div className="mt-6 w-full max-w-[240px]">
+                    <label className="block w-full bg-charcoal text-white text-center rounded-lg py-2.5 text-[11px] font-bold uppercase tracking-wider cursor-pointer hover:bg-black active:scale-95 transition-all shadow-sm">
+                      Select Image
                       <input
                         type="file"
                         accept="image/*"
@@ -170,7 +171,7 @@ export default function PortfolioPage() {
                   </div>
                 </div>
               </div>
-            </div>
+            </Card>
           );
         })}
       </div>

@@ -1,6 +1,8 @@
 import PageWrapper from '../Layout/PageWrapper';
 import { usePlanner } from '../../context/PlannerContext';
 import { childColors } from '../../utils/colorSystem';
+import { Card } from '../UI/Card';
+import { INLINE_INPUT_CLASS, SELECT_CLASS } from '../Forms/formStyles';
 
 export default function GradesPage() {
   const { getValue, updateField, getChildName, getChildAge } = usePlanner();
@@ -17,74 +19,83 @@ export default function GradesPage() {
   const GRADE_OPTIONS = ['', 'A', 'B', 'C', 'D', 'F', 'Pass', 'Fail', 'E', 'S', 'N', 'I'];
 
   return (
-    <PageWrapper title="Progress & Grades Tracker" pageNum={58}>
-      <div className="space-y-12">
+    <PageWrapper 
+      title="Academic Progress Tracker" 
+      description="Record term grades, progress markers, and final outcomes."
+    >
+      <div className="space-y-8">
         {[1, 2, 3, 4].map((childIdx) => {
-          const name = getChildName(childIdx);
+          const name = getChildName(childIdx) || `Student ${childIdx}`;
           const age = getChildAge(childIdx);
           const color = childColors[childIdx];
 
           return (
-            <div
-              key={childIdx}
-              className="bg-white rounded-2xl p-6 border-l-4 shadow-sm border-light-gray"
-              style={{ borderLeftColor: color.hex }}
-            >
-              <div className="mb-4">
-                <h3 className="text-lg font-bold text-charcoal flex items-center gap-2">
-                  <span>{name}</span>
-                  {age && (
-                    <span className="text-xs font-normal text-dark-gray bg-cream rounded-full px-2.5 py-0.5">
-                      Age: {age}
-                    </span>
-                  )}
-                </h3>
-                <p className="text-xs text-medium-gray mt-0.5">
-                  Academic subject progress grades across terms
-                </p>
+            <Card key={childIdx} className="border-l-4" style={{ borderLeftColor: color.hex }}>
+              <div className="flex items-center gap-3 mb-6 border-b border-light-gray/40 pb-4">
+                <div
+                  className="w-8 h-8 rounded border border-light-gray shadow-sm flex items-center justify-center text-xs font-bold"
+                  style={{ backgroundColor: color.bg, color: color.hex }}
+                >
+                  {childIdx}
+                </div>
+                <div>
+                  <h3 className="font-bold text-charcoal text-base">{name}</h3>
+                  <p className="text-[10px] text-medium-gray uppercase tracking-wider mt-0.5">
+                    {age ? `Age: ${age}` : 'Student Profile'}
+                  </p>
+                </div>
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left">
-                  <thead>
-                    <tr className="border-b border-light-gray">
-                      <th className="py-2.5 px-3 text-xs font-semibold text-dark-gray w-1/4">Subject</th>
-                      <th className="py-2.5 px-2 text-xs font-semibold text-dark-gray text-center w-12">Q1</th>
-                      <th className="py-2.5 px-2 text-xs font-semibold text-dark-gray text-center w-12">Q2</th>
-                      <th className="py-2.5 px-2 text-xs font-semibold text-dark-gray text-center w-12">Q3</th>
-                      <th className="py-2.5 px-2 text-xs font-semibold text-dark-gray text-center w-12">Q4</th>
-                      <th className="py-2.5 px-2 text-xs font-semibold text-dark-gray text-center w-16">Final</th>
-                      <th className="py-2.5 px-3 text-xs font-semibold text-dark-gray">Progress Notes & Highlights</th>
+                <table className="w-full text-sm text-left border-collapse">
+                  <thead className="bg-cream/50 border-b border-light-gray/60">
+                    <tr>
+                      <th className="py-2.5 px-4 text-[10px] font-semibold text-medium-gray uppercase tracking-wider w-48">Subject</th>
+                      <th className="py-2.5 px-2 text-[10px] font-semibold text-medium-gray uppercase tracking-wider text-center w-14">Q1</th>
+                      <th className="py-2.5 px-2 text-[10px] font-semibold text-medium-gray uppercase tracking-wider text-center w-14">Q2</th>
+                      <th className="py-2.5 px-2 text-[10px] font-semibold text-medium-gray uppercase tracking-wider text-center w-14">Q3</th>
+                      <th className="py-2.5 px-2 text-[10px] font-semibold text-medium-gray uppercase tracking-wider text-center w-14 border-r border-light-gray/60">Q4</th>
+                      <th className="py-2.5 px-3 text-[10px] font-bold text-charcoal uppercase tracking-wider text-center w-16 bg-cream">Final</th>
+                      <th className="py-2.5 px-4 text-[10px] font-semibold text-medium-gray uppercase tracking-wider">Notes / Highlights</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-light-gray/40">
                     {SUBJECTS.map((subject) => {
                       const subjectKey = subject.toLowerCase().replace(/[^a-z0-9]/g, '');
                       return (
-                        <tr key={subject} className="border-b border-cream hover:bg-cream/35 transition-colors">
-                          <td className="py-2 px-3 text-xs font-medium text-charcoal">{subject}</td>
-                          {['q1', 'q2', 'q3', 'q4', 'final'].map((term) => (
-                            <td key={term} className="py-1 px-1 text-center">
+                        <tr key={subject} className="hover:bg-cream/30 transition-colors">
+                          <td className="py-2 px-4 text-xs font-medium text-dark-gray">{subject}</td>
+                          {['q1', 'q2', 'q3', 'q4'].map((term) => (
+                            <td key={term} className={`py-2 px-1 text-center ${term === 'q4' ? 'border-r border-light-gray/60' : ''}`}>
                               <select
                                 value={getValue(`grade_c${childIdx}_${subjectKey}_${term}`)}
                                 onChange={(e) => updateField(`grade_c${childIdx}_${subjectKey}_${term}`, e.target.value)}
-                                className="w-full text-center border border-light-gray rounded px-1.5 py-1 text-xs outline-none bg-white focus:border-primary font-semibold"
+                                className={`${INLINE_INPUT_CLASS} font-bold text-center appearance-none cursor-pointer p-0 text-charcoal h-6`}
                               >
                                 {GRADE_OPTIONS.map((g) => (
-                                  <option key={g} value={g}>
-                                    {g || '—'}
-                                  </option>
+                                  <option key={g} value={g}>{g || '—'}</option>
                                 ))}
                               </select>
                             </td>
                           ))}
-                          <td className="py-1 px-3">
+                          <td className="py-2 px-1 text-center bg-cream/30">
+                            <select
+                              value={getValue(`grade_c${childIdx}_${subjectKey}_final`)}
+                              onChange={(e) => updateField(`grade_c${childIdx}_${subjectKey}_final`, e.target.value)}
+                              className={`${INLINE_INPUT_CLASS} font-black text-center appearance-none cursor-pointer p-0 text-charcoal h-6 bg-transparent`}
+                            >
+                              {GRADE_OPTIONS.map((g) => (
+                                <option key={g} value={g}>{g || '—'}</option>
+                              ))}
+                            </select>
+                          </td>
+                          <td className="py-2 px-3">
                             <input
                               type="text"
                               value={getValue(`grade_notes_c${childIdx}_${subjectKey}`)}
                               onChange={(e) => updateField(`grade_notes_c${childIdx}_${subjectKey}`, e.target.value)}
-                              placeholder="Notes or unit titles completed"
-                              className="w-full border border-light-gray rounded px-2.5 py-1 text-xs outline-none focus:border-primary"
+                              placeholder="..."
+                              className={INLINE_INPUT_CLASS}
                             />
                           </td>
                         </tr>
@@ -93,36 +104,42 @@ export default function GradesPage() {
                   </tbody>
                 </table>
               </div>
-            </div>
+            </Card>
           );
         })}
 
         {/* Grading Scale Legend */}
-        <div className="mt-8 pt-6 border-t border-light-gray bg-cream rounded-2xl p-5">
-          <h4 className="text-xs font-bold text-charcoal uppercase tracking-wider mb-3">Grading System & Keys</h4>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-dark-gray">
+        <Card className="bg-charcoal text-white mt-12">
+          <h4 className="text-[11px] font-bold text-white/70 uppercase tracking-wider mb-6 border-b border-white/10 pb-3">Grading System & Keys</h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-xs text-white/80">
             <div>
-              <span className="font-bold text-charcoal block mb-1">Standard Letter Grades:</span>
-              <span className="block">A — Excellent (90–100%)</span>
-              <span className="block">B — Above Average (80–89%)</span>
-              <span className="block">C — Average (70–79%)</span>
-              <span className="block">D — Below Average (60–69%)</span>
-              <span className="block">F — Failing (&lt;60%)</span>
+              <span className="font-bold text-white block mb-2">Standard Letter Grades</span>
+              <ul className="space-y-1 font-mono text-[11px]">
+                <li><span className="text-teal w-4 inline-block">A</span> Excellent (90–100%)</li>
+                <li><span className="text-sage w-4 inline-block">B</span> Above Average (80–89%)</li>
+                <li><span className="text-gold w-4 inline-block">C</span> Average (70–79%)</li>
+                <li><span className="text-coral w-4 inline-block">D</span> Below Average (60–69%)</li>
+                <li><span className="text-coral w-4 inline-block">F</span> Failing (&lt;60%)</li>
+              </ul>
             </div>
             <div>
-              <span className="font-bold text-charcoal block mb-1">Alternate Grades:</span>
-              <span className="block">E — Excellent progress</span>
-              <span className="block">S — Satisfactory progress</span>
-              <span className="block">N — Needs improvement</span>
-              <span className="block">I — Incomplete</span>
+              <span className="font-bold text-white block mb-2">Alternate Grades</span>
+              <ul className="space-y-1 font-mono text-[11px]">
+                <li><span className="text-white w-4 inline-block font-bold">E</span> Excellent progress</li>
+                <li><span className="text-white w-4 inline-block font-bold">S</span> Satisfactory progress</li>
+                <li><span className="text-white w-4 inline-block font-bold">N</span> Needs improvement</li>
+                <li><span className="text-white w-4 inline-block font-bold">I</span> Incomplete</li>
+              </ul>
             </div>
             <div>
-              <span className="font-bold text-charcoal block mb-1">Outcome Grades:</span>
-              <span className="block">Pass — Satisfactorily completed</span>
-              <span className="block">Fail — Not completed</span>
+              <span className="font-bold text-white block mb-2">Outcome Grades</span>
+              <ul className="space-y-1 font-mono text-[11px]">
+                <li><span className="text-white inline-block w-10 font-bold">Pass</span> Satisfactorily completed</li>
+                <li><span className="text-white inline-block w-10 font-bold">Fail</span> Not completed</li>
+              </ul>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
     </PageWrapper>
   );

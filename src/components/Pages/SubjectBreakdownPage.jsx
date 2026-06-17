@@ -3,6 +3,8 @@ import TextInput from '../Forms/TextInput';
 import ChecklistItem from '../Forms/ChecklistItem';
 import { usePlanner } from '../../context/PlannerContext';
 import { childColors } from '../../utils/colorSystem';
+import { Card } from '../UI/Card';
+import { Badge } from '../UI/Badge';
 
 const SUBJECTS = [
   { key: 'math', label: 'Math' },
@@ -16,80 +18,90 @@ const SUBJECTS = [
 function ChildSubjectSection({ childIndex }) {
   const { getChildName, getChildAge, getValue, updateField } = usePlanner();
   const color = childColors[childIndex];
-  const name = getChildName(childIndex);
+  const name = getChildName(childIndex) || `Student ${childIndex}`;
   const age = getChildAge(childIndex);
 
   return (
-    <div
-      className="rounded-xl p-5 border-l-4"
-      style={{ borderColor: color.hex, backgroundColor: color.bg }}
-    >
-      <div className="flex items-center gap-3 mb-4">
+    <Card className="border-l-4 overflow-visible relative" style={{ borderLeftColor: color.hex }}>
+      <div className="flex items-center gap-3 mb-6 border-b border-light-gray/40 pb-4">
         <div
-          className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold"
-          style={{ backgroundColor: color.hex }}
+          className="w-8 h-8 rounded border border-light-gray shadow-sm flex items-center justify-center text-xs font-bold"
+          style={{ backgroundColor: color.bg, color: color.hex }}
         >
           {childIndex}
         </div>
         <div>
-          <h3 className="font-semibold text-charcoal">
-            {name} {age && <span className="text-medium-gray font-normal">(Age: {age})</span>}
+          <h3 className="font-bold text-charcoal text-base">
+            {name}
           </h3>
+          <p className="text-xs text-medium-gray mt-0.5">
+            {age ? `Age: ${age}` : 'Profile Setup Pending'}
+          </p>
         </div>
       </div>
 
-      <div className="space-y-3">
-        <h4 className="text-xs font-semibold text-dark-gray uppercase tracking-wider">Core Subjects</h4>
-        {SUBJECTS.map((sub) => (
-          <div key={sub.key} className="flex flex-wrap items-center gap-2">
-            <ChecklistItem
-              field={`sb_c${childIndex}_${sub.key}_checked`}
-              label={`${sub.label}:`}
-              className="w-auto"
-            />
-            <div className="flex-1 min-w-[120px]">
-              <input
-                type="text"
-                value={getValue(`sb_c${childIndex}_${sub.key}_curriculum`)}
-                onChange={(e) => updateField(`sb_c${childIndex}_${sub.key}_curriculum`, e.target.value)}
-                placeholder="Curriculum"
-                className="w-full border border-light-gray rounded px-2 py-1 text-xs focus:border-primary outline-none bg-white"
-              />
+      <div className="space-y-4">
+        <h4 className="text-[10px] font-bold text-medium-gray uppercase tracking-wider mb-2">Core Subjects</h4>
+        
+        <div className="space-y-3">
+          {SUBJECTS.map((sub) => (
+            <div key={sub.key} className="flex flex-col sm:flex-row sm:items-center gap-3 p-2 hover:bg-cream/40 rounded-lg transition-colors">
+              <div className="sm:w-48">
+                <ChecklistItem
+                  field={`sb_c${childIndex}_${sub.key}_checked`}
+                  label={sub.label}
+                  className="w-auto"
+                />
+              </div>
+              <div className="flex-1 flex gap-3">
+                <div className="flex-1 min-w-[120px]">
+                  <input
+                    type="text"
+                    value={getValue(`sb_c${childIndex}_${sub.key}_curriculum`)}
+                    onChange={(e) => updateField(`sb_c${childIndex}_${sub.key}_curriculum`, e.target.value)}
+                    placeholder="Curriculum Resource"
+                    className="w-full border-b border-transparent hover:border-light-gray focus:border-dark-gray px-1 py-1 text-sm outline-none bg-transparent transition-all placeholder:text-light-gray"
+                  />
+                </div>
+                <div className="w-24 border-l border-light-gray/40 pl-3">
+                  <input
+                    type="text"
+                    value={getValue(`sb_c${childIndex}_${sub.key}_level`)}
+                    onChange={(e) => updateField(`sb_c${childIndex}_${sub.key}_level`, e.target.value)}
+                    placeholder="Level"
+                    className="w-full border-b border-transparent hover:border-light-gray focus:border-dark-gray px-1 py-1 text-sm outline-none bg-transparent transition-all placeholder:text-light-gray text-center"
+                  />
+                </div>
+              </div>
             </div>
-            <div className="w-28">
-              <input
-                type="text"
-                value={getValue(`sb_c${childIndex}_${sub.key}_level`)}
-                onChange={(e) => updateField(`sb_c${childIndex}_${sub.key}_level`, e.target.value)}
-                placeholder="Grade/Level"
-                className="w-full border border-light-gray rounded px-2 py-1 text-xs focus:border-primary outline-none bg-white"
-              />
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
 
-        <div className="flex flex-wrap gap-3 mt-4 pt-3 border-t border-white/50">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 pt-4 border-t border-light-gray/40">
           <TextInput
             field={`sb_c${childIndex}_hoursPerWeek`}
-            label="Hours per Week"
-            placeholder="e.g., 25"
-            className="w-32"
+            label="Target Hours per Week"
+            placeholder="e.g. 20"
           />
-          <TextInput
-            field={`sb_c${childIndex}_books`}
-            label="Books/Curriculum"
-            placeholder="Primary resources"
-            className="flex-1 min-w-[200px]"
-          />
+          <div className="sm:col-span-2">
+            <TextInput
+              field={`sb_c${childIndex}_books`}
+              label="Key Books & Materials"
+              placeholder="List primary texts or supplies..."
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
 
 export default function SubjectBreakdownPage() {
   return (
-    <PageWrapper title="Subject Breakdown by Child" pageNum={6}>
+    <PageWrapper 
+      title="Subject Breakdown"
+      description="Define the core subjects, curriculum choices, and levels for each student."
+    >
       <div className="space-y-6">
         {[1, 2, 3, 4].map((i) => (
           <ChildSubjectSection key={i} childIndex={i} />
